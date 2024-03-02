@@ -12,7 +12,7 @@ def parser(
         else:
             num_of_table += 1
 
-    table = pd.DataFrame(columns=['Temp', 'Time', 'DSC', 'Sensit'])
+    table = pd.DataFrame(columns=['Temp', 'Time', 'DSC'])
 
     table_rows = common_bacterias[num_of_table + 1:]
 

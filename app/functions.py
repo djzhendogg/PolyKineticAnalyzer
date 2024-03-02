@@ -43,18 +43,25 @@ def find_area(
         partial_aria.append(area)
     micro_table['Partial_aria'] = [0] + partial_aria
     micro_table['Conversion_rate'] = micro_table['Partial_aria'] / area
+    t_onset = micro_table['Time'].iloc[0]
+
+    t_list = []
+    for t in micro_table['Time'].to_list():
+        t_list.append((t_onset - t) / cool_speed)
+
+    micro_table['t'] = t_list
     return area, micro_table
 
 
 def define_kinetic_param(
-micro_table
+    micro_table
 ):
     micro_table = micro_table[micro_table['Conversion_rate'] >= 0.1]
     micro_table = micro_table[micro_table['Conversion_rate'] <= 0.8]
     micro_table['ln_min_ln_Conversion_rate'] = np.log(-np.log(1 - micro_table['Conversion_rate']))
-    micro_table['ln_Time'] = np.log(micro_table['Time'])
+    micro_table['ln_Time'] = np.log(micro_table['t'])
     res = stats.linregress(micro_table['ln_Time'].to_numpy(), micro_table['ln_min_ln_Conversion_rate'].to_numpy())
-    # z = np.exp(res.intercept)
-    z = res.intercept
+    z = np.exp(res.intercept)
     n = res.slope
-    return z, n
+    r2 = res.rvalue**2
+    return z, n, r2
