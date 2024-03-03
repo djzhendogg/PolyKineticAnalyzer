@@ -25,18 +25,18 @@ cst.set_appearance_mode('light')
 cst.set_default_color_theme('dark-blue')
 app = cst.CTk()
 app.title('PolyKineticAnalyzer')
-app.geometry("1000x800")
+app.geometry("1500x1500")
 
 # styles
-button_text_font = cst.CTkFont(family="Arial Rounded MT Bold", size=20, weight='bold')
+button_text_font = cst.CTkFont(family="Microsoft PhagsPa", size=20, weight='bold')
 label_font = cst.CTkFont(family="Microsoft PhagsPa", size=18,)
 into_text_font = cst.CTkFont(family="Bahnschrift SemiBold", size=20)
 
 # frame settings
 frame_1 = cst.CTkFrame(
     master=app,
-    width=600,
-    height=600,
+    width=1000,
+    height=1000,
     # fg_color='#FFFFFF'
 )
 frame_1.pack(padx=(40, 0))
@@ -48,9 +48,9 @@ frame_1.grid(row=0, column=0)
 temp_mode_label = cst.CTkLabel(
     master=frame_1,
     text='Temperature mode',
-    width=420,
+    width=450,
     font=label_font,
-    justify=RIGHT,
+    justify=LEFT,
     anchor=cst.W
 )
 temp_mode_label.grid(row=0, column=0, columnspan=2, padx=(40, 10), pady=(30, 0))
@@ -58,12 +58,12 @@ temp_mode_label.grid(row=0, column=0, columnspan=2, padx=(40, 10), pady=(30, 0))
 temp_mode_combobox = cst.CTkComboBox(
     master=frame_1,
     values=['cooling', 'heating'],
-    width=420,
+    width=450,
     height=50,
     font=into_text_font,
     fg_color='#E0E2F0',
     border_color='#888B9E',
-    border_width=0,
+    border_width=1,
     dropdown_font=into_text_font,
     dropdown_fg_color='#E0E2F0',
     button_color='#575A6C',
@@ -79,10 +79,10 @@ file_upload_label = cst.CTkLabel(
     text='File Uploading',
     width=450,
     font=label_font,
-    justify=RIGHT,
+    justify=LEFT,
     anchor=cst.W
 )
-file_upload_label.grid(row=2, column=0, columnspan=2, pady=(20, 0), padx=(40, 10))
+file_upload_label.grid(row=2, column=0, columnspan=2, pady=(10, 0), padx=(40, 10))
 
 filepath_var = StringVar()
 
@@ -94,7 +94,7 @@ filepath_input = cst.CTkEntry(
     height=50,
     fg_color='#E0E2F0',
     placeholder_text_color='#000000',
-    border_width=0,
+    border_width=1,
     font=into_text_font,
     border_color='#888B9E'
 )
@@ -118,12 +118,12 @@ filepath_button.grid(row=3, column=1, padx=(10, 10), pady=10)
 heat_cool_label = cst.CTkLabel(
     master=frame_1,
     text='Heating\cooling  rate',
-    width=420,
+    width=450,
     font=label_font,
-    justify=RIGHT,
+    justify=LEFT,
     anchor=cst.W
 )
-heat_cool_label.grid(row=4, column=0, columnspan=2, pady=(20, 0), padx=(40, 10))
+heat_cool_label.grid(row=4, column=0, columnspan=2, pady=(10, 0), padx=(40, 10))
 
 
 heat_cool_input = cst.CTkEntry(
@@ -133,7 +133,7 @@ heat_cool_input = cst.CTkEntry(
     fg_color='#E0E2F0',
     placeholder_text_color='#000000',
     font=into_text_font,
-    border_width=0,
+    border_width=1,
     border_color='#888B9E'
 )
 heat_cool_input.grid(row=5, column=0, padx=(40, 10), pady=10)
@@ -146,7 +146,7 @@ heat_cool_combobox = cst.CTkComboBox(
     font=into_text_font,
     fg_color='#E0E2F0',
     border_color='#888B9E',
-    border_width=0,
+    border_width=1,
     dropdown_font=into_text_font,
     dropdown_fg_color='#E0E2F0',
     button_color='#575A6C',
@@ -155,13 +155,99 @@ heat_cool_combobox = cst.CTkComboBox(
 heat_cool_combobox.set("K/min")
 heat_cool_combobox.grid(row=5, column=1, padx=(10, 10), pady=10)
 #
-# # Units of measurement
-# unit_label = cst.CTkLabel(
-#     master=frame_1,
-#     text='Units of measurement',
-#     width=420,
-#     font=label_font,
-#     justify=RIGHT,
-#     anchor=cst.W
-# )
-# unit_label.grid(row=0, column=2, columnspan=2, padx=(40, 10), pady=(30, 0))
+# Units of measurement
+unit_label = cst.CTkLabel(
+    master=frame_1,
+    text='Units of measurement',
+    width=250,
+    font=label_font,
+    justify=LEFT,
+    anchor=cst.W
+)
+unit_label.grid(row=0, column=4, columnspan=2, padx=(100, 10), pady=(30, 0))
+
+
+temp_unit_label = cst.CTkLabel(
+    master=frame_1,
+    text='Temperature',
+    font=label_font,
+    width=100,
+    justify=LEFT,
+    anchor=cst.W
+)
+temp_unit_label.grid(row=1, column=4, padx=(100, 10), pady=10)
+
+temp_unit_combobox = cst.CTkComboBox(
+    master=frame_1,
+    values=['K', 'C'],
+    width=130,
+    height=50,
+    font=into_text_font,
+    fg_color='#E0E2F0',
+    border_color='#888B9E',
+    border_width=1,
+    dropdown_font=into_text_font,
+    dropdown_fg_color='#E0E2F0',
+    button_color='#575A6C',
+    button_hover_color='#888B9E',
+)
+temp_unit_combobox.set("K")
+temp_unit_combobox.grid(row=1, column=5, padx=(10, 10), pady=10)
+
+dsc_unit_label = cst.CTkLabel(
+    master=frame_1,
+    text='DSC',
+    font=label_font,
+    width=100,
+    justify=LEFT,
+    anchor=cst.W
+)
+dsc_unit_label.grid(row=2, column=4, padx=(100, 10), pady=10)
+
+dsc_unit_combobox = cst.CTkComboBox(
+    master=frame_1,
+    values=['mW/mg', 'W/g'],
+    width=130,
+    height=50,
+    font=into_text_font,
+    fg_color='#E0E2F0',
+    border_color='#888B9E',
+    border_width=1,
+    dropdown_font=into_text_font,
+    dropdown_fg_color='#E0E2F0',
+    button_color='#575A6C',
+    button_hover_color='#888B9E',
+)
+dsc_unit_combobox.set("mW/mg")
+dsc_unit_combobox.grid(row=2, column=5, padx=(10, 10), pady=10)
+
+
+time_unit_label = cst.CTkLabel(
+    master=frame_1,
+    text='Time',
+    font=label_font,
+    width=100,
+    justify=LEFT,
+    anchor=cst.W
+)
+time_unit_label.grid(row=3, column=4, padx=(100, 10), pady=10)
+
+time_unit_combobox = cst.CTkComboBox(
+    master=frame_1,
+    values=['min', 's'],
+    width=130,
+    height=50,
+    font=into_text_font,
+    fg_color='#E0E2F0',
+    border_color='#888B9E',
+    border_width=1,
+    dropdown_font=into_text_font,
+    dropdown_fg_color='#E0E2F0',
+    button_color='#575A6C',
+    button_hover_color='#888B9E',
+)
+time_unit_combobox.set("min")
+time_unit_combobox.grid(row=3, column=5, padx=(10, 10), pady=10)
+
+
+app.mainloop()
