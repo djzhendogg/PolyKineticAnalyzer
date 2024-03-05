@@ -19,7 +19,7 @@ def openfile():
     filepath_var.set(str(filepath))
 
 
-def place_upload_file():
+def place_upload_file(button):
     next_column = len(all_entries)
     print(next_column)
     file_upload_label = cst.CTkLabel(
@@ -106,19 +106,7 @@ def place_upload_file():
         heat_cool_label, heat_cool_input, heat_cool_combobox
     ))
 
-    plus_button = cst.CTkButton(
-        master=frame_1,
-        width=50,
-        height=50,
-        text='+',
-        fg_color='#575A6C',
-        command=place_upload_file,
-        corner_radius=10,
-        hover_color='#888B9E',
-        font=plus_button_text_font
-    )
-
-    plus_button.grid(row=6 + next_column * 4, column=0, padx=(40, 10), pady=10, sticky='w')
+    button.grid(row=6 + next_column * 4, column=0, padx=(40, 10), pady=10, sticky='w')
 
 cst.set_appearance_mode('light')
 cst.set_default_color_theme('dark-blue')
@@ -265,11 +253,11 @@ plus_button = cst.CTkButton(
     height=50,
     text='+',
     fg_color='#575A6C',
-    command=place_upload_file,
     corner_radius=10,
     hover_color='#888B9E',
     font=plus_button_text_font
 )
+plus_button.command = lambda w=plus_button: place_upload_file(w)
 
 plus_button.grid(row=6, column=0, padx=(40, 10), pady=10, sticky='w')
 
