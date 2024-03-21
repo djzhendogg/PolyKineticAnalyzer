@@ -2,10 +2,9 @@ from tkinter import *
 from tkinter import filedialog
 import customtkinter as cst
 
-from main import calculate
+from calculations import Calculations
 from output_app import ResultWindow
-
-
+cst.deactivate_automatic_dpi_awareness()
 
 
 class App(cst.CTk):
@@ -15,6 +14,7 @@ class App(cst.CTk):
         self.all_entries_dict = {}
         self.num_sample = 0
 
+        self.calculated_cl = Calculations()
         self.button_text_font = cst.CTkFont(family="Microsoft PhagsPa", size=20, weight='bold')
         self.plus_button_text_font = cst.CTkFont(family="Microsoft PhagsPa", size=30, weight='bold')
         self.label_font = cst.CTkFont(family="Microsoft PhagsPa", size=18, )
@@ -218,12 +218,12 @@ class App(cst.CTk):
         #     print(a)
 
         rate_num, _, filepath = self.all_entries[0]
-        z, n, r2 = calculate(filepath.cget("text"), int(rate_num.get()))
+        self.calculated_cl.filepath = filepath.cget("text")
+        self.calculated_cl.cool_speed = int(rate_num.get())
+
+        self.z, self.n, self.r2 = self.calculated_cl.calculate()
         self.toplevel_window = ResultWindow(self)
         self.toplevel_window.after(10, self.toplevel_window.lift)
-        self.toplevel_window.z_label_num.configure(text=str(round(z, 3)))
-        self.toplevel_window.n_label_num.configure(text=str(round(n, 3)))
-        self.toplevel_window.r2_label_num.configure(text=str(round(r2, 3)))
 
     def addBox(self):
         def openfile():
