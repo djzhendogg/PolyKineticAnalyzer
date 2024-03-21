@@ -7,12 +7,12 @@ from parser import parser
 
 
 def calculate(
-    file_name: str
+    file_name: str,
+    cool_speed: int
 ):
     with open(file_name, 'r', encoding='latin-1') as file:
         common_bacterias = [bacteria.replace('\n', '') for bacteria in file]
 
-    cool_speed = 20
     cool_speed = cool_speed / 60
 
     table = parser(common_bacterias)
@@ -29,5 +29,5 @@ def calculate(
 
 
 if __name__ == "__main__":
-    r = calculate('data/PBS_20Kmin.txt')
+    r = calculate('data/PBS_20Kmin.txt', 20)
     print(r)
