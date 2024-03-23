@@ -14,7 +14,6 @@ class App(cst.CTk):
         self.all_entries_dict = {}
         self.num_sample = 0
 
-        self.calculated_cl = Calculations()
         self.button_text_font = cst.CTkFont(family="Microsoft PhagsPa", size=20, weight='bold')
         self.plus_button_text_font = cst.CTkFont(family="Microsoft PhagsPa", size=30, weight='bold')
         self.label_font = cst.CTkFont(family="Microsoft PhagsPa", size=18, )
@@ -216,12 +215,21 @@ class App(cst.CTk):
         #     print(number, rate_num.get(), rate_mes.get(), filepath.cget("text"))
         #     a = calculate(filepath.cget("text"), int(rate_num.get()))
         #     print(a)
+        self.calculation_results: list = []
+        for i in range(len(self.all_entries)):
+            calculation_results_dict: dict = {}
+            rate_num, _, filepath = self.all_entries[1]
+            calculated_cl = Calculations()
+            calculated_cl.filepath = filepath.cget("text")
+            calculated_cl.cool_speed = int(rate_num.get())
 
-        rate_num, _, filepath = self.all_entries[0]
-        self.calculated_cl.filepath = filepath.cget("text")
-        self.calculated_cl.cool_speed = int(rate_num.get())
+            z, n, r2 = calculated_cl.calculate()
+            calculation_results_dict['cl'] = calculated_cl
+            calculation_results_dict['z'] = z
+            calculation_results_dict['n'] = n
+            calculation_results_dict['r2'] = r2
+            self.calculation_results.append(calculation_results_dict)
 
-        self.z, self.n, self.r2 = self.calculated_cl.calculate()
         self.toplevel_window = ResultWindow(self)
         self.toplevel_window.after(10, self.toplevel_window.lift)
 

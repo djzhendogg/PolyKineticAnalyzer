@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 
 def plot_1(frame, inflection, table):
     px = 1 / 100
-    fig = Figure(figsize=(400 * px, 280 * px))
+    fig = Figure(figsize=(450 * px, 280 * px))
 
 
     # adding the subplot
@@ -40,7 +40,7 @@ def plot_1(frame, inflection, table):
 
 def plot_2(frame, micro_table):
     px = 1 / 100
-    fig = Figure(figsize=(400 * px, 280 * px))
+    fig = Figure(figsize=(450 * px, 280 * px))
 
     # adding the subplot
     plot2 = fig.add_subplot(111)
@@ -68,7 +68,7 @@ def plot_2(frame, micro_table):
 
 def plot_3(frame, trimmed):
     px = 1 / 100
-    fig = Figure(figsize=(400 * px, 280 * px))
+    fig = Figure(figsize=(450 * px, 280 * px))
 
     # adding the subplot
     plot3 = fig.add_subplot(111)
