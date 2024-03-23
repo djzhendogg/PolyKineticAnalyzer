@@ -218,17 +218,20 @@ class App(cst.CTk):
         self.calculation_results: list = []
         for i in range(len(self.all_entries)):
             calculation_results_dict: dict = {}
-            rate_num, _, filepath = self.all_entries[1]
-            calculated_cl = Calculations()
-            calculated_cl.filepath = filepath.cget("text")
-            calculated_cl.cool_speed = int(rate_num.get())
+            rate_num, _, filepath = self.all_entries[i]
+            rate_entry = rate_num.get()
+            filepath_entry = filepath.cget("text")
+            if rate_entry != '' and filepath_entry != '':
+                calculated_cl = Calculations()
+                calculated_cl.filepath = filepath_entry
+                calculated_cl.cool_speed = int(rate_entry)
 
-            z, n, r2 = calculated_cl.calculate()
-            calculation_results_dict['cl'] = calculated_cl
-            calculation_results_dict['z'] = z
-            calculation_results_dict['n'] = n
-            calculation_results_dict['r2'] = r2
-            self.calculation_results.append(calculation_results_dict)
+                z, n, r2 = calculated_cl.calculate()
+                calculation_results_dict['cl'] = calculated_cl
+                calculation_results_dict['z'] = z
+                calculation_results_dict['n'] = n
+                calculation_results_dict['r2'] = r2
+                self.calculation_results.append(calculation_results_dict)
 
         self.toplevel_window = ResultWindow(self)
         self.toplevel_window.after(10, self.toplevel_window.lift)
