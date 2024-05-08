@@ -100,12 +100,11 @@ class Calculations:
             partial_aria.append(area)
         self.micro_table['Partial_aria'] = [0] + partial_aria
         self.micro_table['Conversion_rate'] = self.micro_table['Partial_aria'] / area
-        t_onset = self.micro_table['Time'].iloc[0]
+        t_onset = self.micro_table['Temp'].iloc[0]
 
         t_list = []
-        for t in self.micro_table['Time'].to_list():
+        for t in self.micro_table['Temp'].to_list():
             t_list.append((t_onset - t) / self.cool_speed)
-
         self.micro_table['t'] = t_list
         return area, self.micro_table
 
@@ -115,14 +114,18 @@ class Calculations:
         self.trimmed = self.micro_table[self.micro_table['Conversion_rate'] >= 0.1]
         self.trimmed = self.trimmed[self.trimmed['Conversion_rate'] <= 0.8]
         self.trimmed['ln_min_ln_Conversion_rate'] = np.log(-np.log(1 - self.trimmed['Conversion_rate']))
-        self.trimmed['ln_Time'] = np.log(self.trimmed['t'])
+        self.trimmed['ln_Time'] = np.log(abs(self.trimmed['t']))
         res = stats.linregress(self.trimmed['ln_Time'].to_numpy(), self.trimmed['ln_min_ln_Conversion_rate'].to_numpy())
-        z = np.exp(res.intercept)
+        z = np.exp(res.intercept/self.cool_speed)
         n = res.slope
         r2 = res.rvalue ** 2
+        time = self.trimmed['Time'].to_numpy()
+        con_rate = self.trimmed['Conversion_rate'].to_numpy()
+        grad = np.gradient(con_rate, time)
+        self.trimmed['ln_Partial_aria_per_Time'] = np.log(abs(grad))
         return z, n, r2
 
 
 if __name__ == "__main__":
-    r = Calculations(filepath='data/PBS_20Kmin.txt', cool_speed=20).calculate()
+    r = Calculations(filepath='data/PBS_3Kmin.txt', cool_speed=20).calculate()
     print(r)

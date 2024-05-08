@@ -22,7 +22,9 @@ class ResultWindow(cst.CTkToplevel):
         self.title('PolyKineticAnalyzer')
         self.geometry("1020x700")
         self.configure(fg_color='#FFFFFF')
-
+        self.show_fridman: bool = False
+        if len(self.master.calculation_results) > 1:
+            self.show_fridman = True
         self.button_text_font = cst.CTkFont(family="Microsoft PhagsPa", size=20, weight='bold')
         self.plus_button_text_font = cst.CTkFont(family="Microsoft PhagsPa", size=30, weight='bold')
         self.label_font = cst.CTkFont(family="Microsoft PhagsPa", size=18, )
@@ -156,4 +158,11 @@ class ResultWindow(cst.CTkToplevel):
                 frame=frame_7,
                 trimmed=class_tables_info.trimmed
             )
+        self.tabview.add('fridman')
+        for sample in self.master.calculation_results:
+            x = sample['cl'].trimmed['Time'].to_numpy()
+            y = sample['cl'].trimmed['Conversion_rate'].to_numpy()
+            grad = np.gradient(y, x)
+            result[i]['cl'].trimmed['ln_Partial_aria_per_Time'] = np.log(abs(grad))
+
 
