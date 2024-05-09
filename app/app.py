@@ -4,6 +4,7 @@ import customtkinter as cst
 
 from calculations import Calculations
 from output_app import ResultWindow
+from fridman_calculations import fridman_calculations_
 cst.deactivate_automatic_dpi_awareness()
 
 
@@ -12,13 +13,15 @@ class App(cst.CTk):
         super().__init__(*args, **kwargs)
         self.all_entries = []
         self.all_entries_dict = {}
+        self.fridman_fin_dict: dict = {}
+        self.fridman_energy = 0
         self.num_sample = 0
 
         self.button_text_font = cst.CTkFont(family="Microsoft PhagsPa", size=20, weight='bold')
         self.plus_button_text_font = cst.CTkFont(family="Microsoft PhagsPa", size=30, weight='bold')
         self.label_font = cst.CTkFont(family="Microsoft PhagsPa", size=18, )
         self.into_text_font = cst.CTkFont(family="Bahnschrift SemiBold", size=20)
-
+        self.show_fridman: bool = False
         self.title('PolyKineticAnalyzer')
         self.geometry("1000x700")
 
@@ -232,7 +235,13 @@ class App(cst.CTk):
                 calculation_results_dict['n'] = n
                 calculation_results_dict['r2'] = r2
                 self.calculation_results.append(calculation_results_dict)
-
+        if len(self.calculation_results) > 1:
+            self.show_fridman = True
+            (
+                self.fridman_fin_dict,
+                self.fridman_energy,
+                self.summary_energy_table_data
+            ) = fridman_calculations_(self.calculation_results)
         self.toplevel_window = ResultWindow(self)
         self.toplevel_window.after(10, self.toplevel_window.lift)
 

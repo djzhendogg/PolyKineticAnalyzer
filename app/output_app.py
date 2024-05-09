@@ -1,9 +1,12 @@
 import customtkinter as cst
 from tkinter import *
-from plots import plot_1, plot_2, plot_3
-from calculations import Calculations
-
-
+from plots import (
+    plot_1,
+    plot_2,
+    plot_3,
+    plot_fridman
+)
+from table import TableWidget
 cst.set_appearance_mode('light')
 cst.set_default_color_theme('dark-blue')
 cst.deactivate_automatic_dpi_awareness()
@@ -14,7 +17,6 @@ class SCAbstractFrame(cst.CTkScrollableFrame):
         super().__init__(master, **kwargs)
 
 
-
 class ResultWindow(cst.CTkToplevel):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -22,9 +24,6 @@ class ResultWindow(cst.CTkToplevel):
         self.title('PolyKineticAnalyzer')
         self.geometry("1020x700")
         self.configure(fg_color='#FFFFFF')
-        self.show_fridman: bool = False
-        if len(self.master.calculation_results) > 1:
-            self.show_fridman = True
         self.button_text_font = cst.CTkFont(family="Microsoft PhagsPa", size=20, weight='bold')
         self.plus_button_text_font = cst.CTkFont(family="Microsoft PhagsPa", size=30, weight='bold')
         self.label_font = cst.CTkFont(family="Microsoft PhagsPa", size=18, )
@@ -37,12 +36,22 @@ class ResultWindow(cst.CTkToplevel):
             # fg_color='#FFFFFF'
         )
         self.tabview.pack()
+        summary_avrami_table_data = [
+            ('rate', 'z', 'n', 'r2')
+        ]
+        inflections = []
+        tables = []
+        micro_tables = []
+        trimmed_tables = []
         for number, data_info in enumerate(self.master.calculation_results):
             class_tables_info = data_info.get('cl')
             z = data_info.get('z')
             n = data_info.get('n')
             r2 = data_info.get('r2')
             tab_name = f'tab {number + 1}'
+            summary_avrami_table_data.append(
+                (round(data_info['cl'].cool_speed * 60, 1), round(z, 3), round(n, 3), round(r2, 3))
+            )
             self.tabview.add(tab_name)
             abstract_frame = cst.CTkScrollableFrame(
                 master=self.tabview.tab(tab_name),
@@ -135,7 +144,8 @@ class ResultWindow(cst.CTkToplevel):
                 inflection=class_tables_info.inflection,
                 table=class_tables_info.table
             )
-
+            inflections.append(class_tables_info.inflection)
+            tables.append(class_tables_info.table)
             frame_6 = cst.CTkFrame(
                 master=abstract_frame,
                 width=450,
@@ -147,6 +157,7 @@ class ResultWindow(cst.CTkToplevel):
                 frame=frame_6,
                 micro_table=class_tables_info.micro_table
             )
+            micro_tables.append(class_tables_info.micro_table)
             frame_7 = cst.CTkFrame(
                 master=abstract_frame,
                 width=450,
@@ -158,11 +169,106 @@ class ResultWindow(cst.CTkToplevel):
                 frame=frame_7,
                 trimmed=class_tables_info.trimmed
             )
-        self.tabview.add('fridman')
-        for sample in self.master.calculation_results:
-            x = sample['cl'].trimmed['Time'].to_numpy()
-            y = sample['cl'].trimmed['Conversion_rate'].to_numpy()
-            grad = np.gradient(y, x)
-            result[i]['cl'].trimmed['ln_Partial_aria_per_Time'] = np.log(abs(grad))
+            trimmed_tables.append(class_tables_info.trimmed)
+        if self.master.show_fridman:
+            self.tabview.add('fridman')
+            abstract_frame_f = cst.CTkScrollableFrame(
+                master=self.tabview.tab('fridman'),
+                width=950,
+                height=650,
+                fg_color='#FFFFFF'
+            )
+            abstract_frame_f.grid(row=0, column=0, padx=(0, 0))
+            frame_8 = cst.CTkFrame(
+                master=abstract_frame_f,
+                width=285,
+                height=260,
+                fg_color='#E0E2F0'
+            )
+            frame_8.grid(row=0, column=0, padx=(10, 10))
 
+            energy_label = cst.CTkLabel(
+                master=frame_8,
+                text='E',
+                font=self.into_text_font,
+                width=40,
+                justify=CENTER,
+                anchor=cst.W
+            )
+            energy_label.grid(row=0, column=0, pady=(20, 10), padx=(20, 0))
+
+            energy_label_num = cst.CTkLabel(
+                master=frame_8,
+                text=str(round(self.master.fridman_energy, 3)),
+                font=self.into_text_font,
+                width=155,
+                height=50,
+                justify=CENTER,
+                fg_color='#FFFFFF'
+            )
+            energy_label_num.grid(row=0, column=1, padx=(50, 20), pady=(20, 10))
+            frame_9 = cst.CTkFrame(
+                master=abstract_frame_f,
+                width=900,
+                height=600,
+                fg_color='#E0E2F0'
+            )
+            frame_9.grid(row=1, column=0, padx=(10, 10))
+            plot_fridman(
+                frame=frame_9,
+                fin_dict=self.master.fridman_fin_dict
+            )
+            frame_10 = cst.CTkFrame(
+                master=abstract_frame_f,
+                width=900,
+                height=600,
+                fg_color='#E0E2F0'
+            )
+            frame_10.grid(row=2, column=0, padx=(10, 10), pady=(20, 10))
+
+            energy_table = TableWidget(frame_10, self.master.summary_energy_table_data)
+            energy_table.activate_scrollbar()
+
+            self.tabview.add('summary')
+            summary_frame = cst.CTkScrollableFrame(
+                master=self.tabview.tab('summary'),
+                width=950,
+                height=650,
+                fg_color='#FFFFFF'
+            )
+            summary_frame.grid(row=0, column=0, padx=(0, 0))
+            frame_11 = cst.CTkFrame(
+                master=summary_frame,
+                width=285,
+                height=200,
+                fg_color='#E0E2F0'
+            )
+            frame_11.grid(row=0, column=0, columnspan=2, padx=(10, 10))
+            avrami_summary_table = TableWidget(frame_11, summary_avrami_table_data)
+            avrami_summary_table.activate_scrollbar()
+
+            frame_13 = cst.CTkFrame(
+                master=summary_frame,
+                width=450,
+                height=280,
+                fg_color='#E0E2F0'
+            )
+            frame_13.grid(row=1, column=0, padx=(10, 10))
+            plot_2(
+                frame=frame_13,
+                micro_table=micro_tables,
+                several=True
+            )
+            frame_14 = cst.CTkFrame(
+                master=summary_frame,
+                width=450,
+                height=280,
+                fg_color='#E0E2F0'
+            )
+            frame_14.grid(row=1, column=1, padx=(10, 10))
+            plot_3(
+                frame=frame_14,
+                trimmed=trimmed_tables,
+                several=True
+            )
 
