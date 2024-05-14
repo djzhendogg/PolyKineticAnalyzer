@@ -47,7 +47,8 @@ def plot_2(frame, micro_table):
 
     # plotting the graph
     plot2.plot(micro_table["Temp"], micro_table["Conversion_rate"])
-
+    plot2.set_xlabel('T (°K)')
+    plot2.set_ylabel('relative degree of crystallinity')
     # creating the Tkinter canvas
     # containing the Matplotlib figure
     canvas = FigureCanvasTkAgg(fig,

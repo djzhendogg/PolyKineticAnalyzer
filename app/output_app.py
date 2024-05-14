@@ -156,4 +156,3 @@ class ResultWindow(cst.CTkToplevel):
                 frame=frame_7,
                 trimmed=class_tables_info.trimmed
             )
-

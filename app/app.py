@@ -2,6 +2,7 @@ from tkinter import *
 from tkinter import filedialog
 import customtkinter as cst
 
+import os
 from calculations import Calculations
 from output_app import ResultWindow
 cst.deactivate_automatic_dpi_awareness()
@@ -67,7 +68,7 @@ class App(cst.CTk):
             master=self,
             width=400,
             height=1400,
-            # fg_color='#FFFFFF'
+            fg_color='#FFFFFF'
         )
         self.frame_2.place(x=550, y=50)
 
@@ -244,8 +245,8 @@ class App(cst.CTk):
                     ("text files", "*.txt"), ("all files", "*.*")
                 )
             )
-            filepath_n = str(filepath).split('/')
-            filepath_lable.configure(text=filepath_n[-1])
+            filepath_basename = os.path.basename(filepath)
+            filepath_lable.configure(text=filepath_basename)
             filepath_lable_ull.configure(text=filepath)
 
         print("ADD")
