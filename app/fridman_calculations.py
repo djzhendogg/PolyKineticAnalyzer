@@ -15,18 +15,20 @@ def fridman_calculations_(calculation_results: list[dict]):
         ("Conversion_rate", "E")
     ]
     for pull in calculation_results:
-        x_conrate = pull['cl'].trimmed['Conversion_rate'].to_numpy()
-        y_temp = pull['cl'].trimmed['Temp'].to_numpy()
+        trimmed_1 = pull['cl'].trimmed[pull['cl'].trimmed['Conversion_rate'] >= 0.1]
+        trimmed_1 = trimmed_1[trimmed_1['Conversion_rate'] >= 0.1]
+        x_conrate = trimmed_1['Conversion_rate'].to_numpy()
+        y_temp = trimmed_1['Temp'].to_numpy()
 
         conrate_temp_polifit_param = np.polyfit(x_conrate, y_temp, 4)
         conrate_temp_polifit_param_func = np.poly1d(conrate_temp_polifit_param)
         y_temp_new = conrate_temp_polifit_param_func(conv_rate_base)
         db_new = pd.DataFrame()
         db_new['Conversion_rate'] = conv_rate_base
-        db_new['Temp'] = y_temp_new
+        db_new['Temp'] = y_temp_new + 273.15
 
         x_temp = 1000 / y_temp
-        y_ln_area_per_time = pull['cl'].trimmed['ln_Partial_aria_per_Time'].to_numpy()
+        y_ln_area_per_time = trimmed_1['ln_Partial_aria_per_Time'].to_numpy()
 
         ln_area_per_time_temp_polifit_param = np.polyfit(x_temp, y_ln_area_per_time, 3)
         ln_area_per_time_temp_polifit_param_func = np.poly1d(ln_area_per_time_temp_polifit_param)

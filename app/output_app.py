@@ -50,7 +50,7 @@ class ResultWindow(cst.CTkToplevel):
             r2 = data_info.get('r2')
             tab_name = f'tab {number + 1}'
             summary_avrami_table_data.append(
-                (round(data_info['cl'].cool_speed * 60, 1), round(z, 3), round(n, 3), round(r2, 3))
+                (round(data_info['cl'].cool_speed, 1), round(z, 3), round(n, 3), round(r2, 3))
             )
             self.tabview.add(tab_name)
             abstract_frame = cst.CTkScrollableFrame(

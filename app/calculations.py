@@ -17,7 +17,7 @@ class Calculations:
         with open(self.filepath, 'r', encoding='latin-1') as file:
             self.table_in_list = [bacteria.replace('\n', '') for bacteria in file]
 
-        self.cool_speed = self.cool_speed / 60
+        # self.cool_speed = self.cool_speed / 60
 
         self.parser()
         self.find_inflections()
@@ -58,7 +58,7 @@ class Calculations:
             rows_in_rows.append(row)
 
         rows_array = np.array(rows_in_rows)
-        self.table['Temp'] = rows_array[:, 0] + 273.15
+        self.table['Temp'] = rows_array[:, 0]
         self.table['Time'] = rows_array[:, 1]
         self.table['DSC'] = rows_array[:, 2]
 
@@ -96,25 +96,34 @@ class Calculations:
             h = abs(np.average([sample['DSC'], smaple_plus_one['DSC']]) - np.average(
                 [sample['DSC_bottom'], smaple_plus_one['DSC_bottom']]))
             a = smaple_plus_one['Temp'] - sample['Temp']
-            area += a * h / self.cool_speed
+            area += a * h
             partial_aria.append(area)
+
+
         self.micro_table['Partial_aria'] = [0] + partial_aria
-        self.micro_table['Conversion_rate'] = self.micro_table['Partial_aria'] / area
-        t_onset = self.micro_table['Temp'].iloc[0]
+        self.micro_table['Conversion_rate'] = 1 - self.micro_table['Partial_aria'] / area
+        # t_onset = self.micro_table['Temp'].iloc[-1]
 
         t_list = []
-        for t in self.micro_table['Temp'].to_list():
-            t_list.append((t_onset - t) / self.cool_speed)
+        # for t in self.micro_table['Temp'].to_list():
+        #     t_list.append((t_onset - t) / self.cool_speed)
+        t_onset = self.micro_table['Time'].iloc[-1]
+        for t in self.micro_table['Time'].to_list():
+            t_list.append(t - t_onset)
         self.micro_table['t'] = t_list
         return area, self.micro_table
 
     def define_kinetic_param(
             self
     ):
-        self.trimmed = self.micro_table[self.micro_table['Conversion_rate'] >= 0.1]
-        self.trimmed = self.trimmed[self.trimmed['Conversion_rate'] <= 0.8]
+        # self.trimmed = self.micro_table[self.micro_table['Conversion_rate'] >= 0.1]
+        # self.trimmed = self.trimmed[self.trimmed['Conversion_rate'] <= 0.9]
+        self.trimmed = self.micro_table
         self.trimmed['ln_min_ln_Conversion_rate'] = np.log(-np.log(1 - self.trimmed['Conversion_rate']))
         self.trimmed['ln_Time'] = np.log(abs(self.trimmed['t']))
+
+        self.trimmed.replace([np.inf, -np.inf], np.nan, inplace=True)
+        self.trimmed.dropna(inplace=True)
         res = stats.linregress(self.trimmed['ln_Time'].to_numpy(), self.trimmed['ln_min_ln_Conversion_rate'].to_numpy())
         z = np.exp(res.intercept/self.cool_speed)
         n = res.slope
@@ -127,5 +136,5 @@ class Calculations:
 
 
 if __name__ == "__main__":
-    r = Calculations(filepath='data/PBS_3Kmin.txt', cool_speed=20).calculate()
+    r = Calculations(filepath='data/PBS_15Kmin.txt', cool_speed=15).calculate()
     print(r)
