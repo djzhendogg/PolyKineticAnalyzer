@@ -221,13 +221,14 @@ class App(cst.CTk):
         self.calculation_results: list = []
         for i in range(len(self.all_entries)):
             calculation_results_dict: dict = {}
-            rate_num, _, filepath = self.all_entries[i]
+            rate_num, cs_units, filepath = self.all_entries[i]
             rate_entry = rate_num.get()
             filepath_entry = filepath.cget("text")
             if rate_entry != '' and filepath_entry != '':
                 calculated_cl = Calculations()
                 calculated_cl.filepath = filepath_entry
                 calculated_cl.cool_speed = int(rate_entry)
+                calculated_cl.cool_speed_units = cs_units.get()
 
                 z, n, r2 = calculated_cl.calculate()
                 calculation_results_dict['cl'] = calculated_cl

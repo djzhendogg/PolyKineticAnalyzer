@@ -48,7 +48,8 @@ class ResultWindow(cst.CTkToplevel):
             z = data_info.get('z')
             n = data_info.get('n')
             r2 = data_info.get('r2')
-            tab_name = f'tab {number + 1}'
+            # tab_name = f'tab {number + 1}'
+            tab_name = f'{class_tables_info.cool_speed} {class_tables_info.cool_speed_units}'
             summary_avrami_table_data.append(
                 (round(data_info['cl'].cool_speed, 1), round(z, 3), round(n, 3), round(r2, 3))
             )
@@ -60,6 +61,52 @@ class ResultWindow(cst.CTkToplevel):
                 fg_color='#FFFFFF'
             )
             abstract_frame.grid(row=0, column=0, padx=(0, 0))
+            frame_4_1 = cst.CTkFrame(
+                master=abstract_frame,
+                width=420,
+                height=300,
+                fg_color='#E0E2F0'
+            )
+            frame_4_1.grid(row=0, column=0, padx=(10, 10))
+
+            file_name_label = cst.CTkLabel(
+                master=frame_4_1,
+                text=f"File name: {class_tables_info.filepath.split('/')[-1]}",
+                font=self.into_text_font,
+                width=400,
+                justify=CENTER,
+                anchor=cst.W
+            )
+            file_name_label.grid(row=0, column=0, pady=(10, 10), padx=(10, 0))
+
+            cs_label = cst.CTkLabel(
+                master=frame_4_1,
+                text=f"Cool speed: {class_tables_info.cool_speed} {class_tables_info.cool_speed_units}",
+                font=self.into_text_font,
+                width=400,
+                justify=CENTER,
+                anchor=cst.W
+            )
+            cs_label.grid(row=1, column=0, pady=(10, 10), padx=(10, 0))
+
+            cs_temp_label = cst.CTkLabel(
+                master=frame_4_1,
+                text=f"Crystallization temperature: {class_tables_info.cristal_temp}",
+                font=self.into_text_font,
+                width=400,
+                justify=CENTER,
+                anchor=cst.W
+            )
+            cs_temp_label.grid(row=2, column=0, pady=(10, 10), padx=(10, 0))
+            area_label = cst.CTkLabel(
+                master=frame_4_1,
+                text=f"Area: {class_tables_info.area}",
+                font=self.into_text_font,
+                width=400,
+                justify=CENTER,
+                anchor=cst.W
+            )
+            area_label.grid(row=3, column=0, pady=(10, 10), padx=(10, 0))
 
             frame_4 = cst.CTkFrame(
                 master=abstract_frame,
@@ -67,7 +114,7 @@ class ResultWindow(cst.CTkToplevel):
                 height=260,
                 fg_color='#E0E2F0'
             )
-            frame_4.grid(row=0, column=0, padx=(10, 10))
+            frame_4.grid(row=0, column=1, padx=(10, 10))
 
             z_label = cst.CTkLabel(
                 master=frame_4,
@@ -138,12 +185,20 @@ class ResultWindow(cst.CTkToplevel):
                 height=200,
                 fg_color='#E0E2F0'
             )
-            frame_5.grid(row=0, column=1, padx=(10, 10))
+            frame_5.grid(row=1, column=0, padx=(10, 10))
             plot_1(
                 frame=frame_5,
                 inflection=class_tables_info.inflection,
                 table=class_tables_info.table
             )
+            frame_4_2 = cst.CTkFrame(
+                master=abstract_frame,
+                width=420,
+                height=260,
+                fg_color='#E0E2F0'
+            )
+            frame_4_2.grid(row=1, column=1, padx=(10, 10))
+
             inflections.append(class_tables_info.inflection)
             tables.append(class_tables_info.table)
             frame_6 = cst.CTkFrame(
@@ -152,7 +207,7 @@ class ResultWindow(cst.CTkToplevel):
                 height=280,
                 fg_color='#E0E2F0'
             )
-            frame_6.grid(row=1, column=0, padx=(10, 10))
+            frame_6.grid(row=2, column=0, padx=(10, 10))
             plot_2(
                 frame=frame_6,
                 micro_table=class_tables_info.micro_table
@@ -164,7 +219,7 @@ class ResultWindow(cst.CTkToplevel):
                 height=280,
                 fg_color='#E0E2F0'
             )
-            frame_7.grid(row=1, column=1, padx=(10, 10))
+            frame_7.grid(row=2, column=1, padx=(10, 10))
             plot_3(
                 frame=frame_7,
                 trimmed=class_tables_info.trimmed

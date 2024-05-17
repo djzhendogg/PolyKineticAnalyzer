@@ -8,7 +8,10 @@ class Calculations:
     def __init__(self, **kwargs):
         self.filepath = kwargs.get('filepath', '')
         self.cool_speed = kwargs.get('cool_speed', '')
+        self.cool_speed_units = kwargs.get('cool_speed_units', '')
         self.table_in_list = []
+        self.cristal_temp: int = 0
+        self.area: int = 0
         self.table = pd.DataFrame(columns=['Temp', 'Time', 'DSC'])
 
     def calculate(
@@ -69,12 +72,15 @@ class Calculations:
         y = self.table['DSC'].to_numpy()
         grad = np.gradient(np.gradient(y, x), x)
         self.table['Prois'] = grad
-        max_temp_id = self.table[self.table['DSC'] == min(self.table['DSC'])]['Temp'].index[0]
+        cristal_temp_row = self.table[self.table['DSC'] == min(self.table['DSC'])]['Temp']
+        self.cristal_temp = cristal_temp_row.iloc[0]
+        max_temp_id = cristal_temp_row.index[0]
         first_table = self.table.iloc[:max_temp_id]
         second_table = self.table.iloc[max_temp_id:]
         first_min = first_table[abs(first_table['Prois']) == min(abs(first_table['Prois']))].iloc[0].to_frame().T
         second_min = second_table[abs(second_table['Prois']) == min(abs(second_table['Prois']))].iloc[0].to_frame().T
         self.inflection = pd.concat([first_min, second_min])
+
 
     def find_area(
             self
@@ -88,7 +94,6 @@ class Calculations:
         stop_y = self.micro_table['DSC'].loc[covered_energy_border_id[1]]
         self.micro_table['Temp_bottom'] = np.linspace(start_x, stop_x, num=line_array_len)
         self.micro_table['DSC_bottom'] = np.linspace(start_y, stop_y, num=line_array_len)
-        area = 0
         partial_aria = []
         for i in range(line_array_len - 1):
             sample = self.micro_table.iloc[i]
@@ -96,12 +101,12 @@ class Calculations:
             h = abs(np.average([sample['DSC'], smaple_plus_one['DSC']]) - np.average(
                 [sample['DSC_bottom'], smaple_plus_one['DSC_bottom']]))
             a = smaple_plus_one['Temp'] - sample['Temp']
-            area += a * h
-            partial_aria.append(area)
+            self.area += a * h
+            partial_aria.append(self.area)
 
 
         self.micro_table['Partial_aria'] = [0] + partial_aria
-        self.micro_table['Conversion_rate'] = 1 - self.micro_table['Partial_aria'] / area
+        self.micro_table['Conversion_rate'] = 1 - self.micro_table['Partial_aria'] / self.area
         # t_onset = self.micro_table['Temp'].iloc[-1]
 
         t_list = []
@@ -111,7 +116,7 @@ class Calculations:
         for t in self.micro_table['Time'].to_list():
             t_list.append(t - t_onset)
         self.micro_table['t'] = t_list
-        return area, self.micro_table
+        return self.area, self.micro_table
 
     def define_kinetic_param(
             self
