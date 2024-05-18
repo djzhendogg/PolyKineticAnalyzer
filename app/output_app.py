@@ -7,6 +7,7 @@ from plots import (
     plot_fridman
 )
 from table import TableWidget
+from explanation_taker import n_explanation
 cst.set_appearance_mode('light')
 cst.set_default_color_theme('dark-blue')
 cst.deactivate_automatic_dpi_awareness()
@@ -22,7 +23,7 @@ class ResultWindow(cst.CTkToplevel):
         super().__init__(*args, **kwargs)
 
         self.title('PolyKineticAnalyzer')
-        self.geometry("1020x700")
+        self.geometry("1070x700")
         self.configure(fg_color='#FFFFFF')
         self.button_text_font = cst.CTkFont(family="Microsoft PhagsPa", size=20, weight='bold')
         self.plus_button_text_font = cst.CTkFont(family="Microsoft PhagsPa", size=30, weight='bold')
@@ -31,7 +32,7 @@ class ResultWindow(cst.CTkToplevel):
 
         self.tabview = cst.CTkTabview(
             master=self,
-            width=970,
+            width=1020,
             height=670,
             # fg_color='#FFFFFF'
         )
@@ -56,7 +57,7 @@ class ResultWindow(cst.CTkToplevel):
             self.tabview.add(tab_name)
             abstract_frame = cst.CTkScrollableFrame(
                 master=self.tabview.tab(tab_name),
-                width=950,
+                width=1000,
                 height=650,
                 fg_color='#FFFFFF'
             )
@@ -114,7 +115,7 @@ class ResultWindow(cst.CTkToplevel):
                 height=260,
                 fg_color='#E0E2F0'
             )
-            frame_4.grid(row=0, column=1, padx=(10, 10))
+            frame_4.grid(row=0, column=1, padx=(10, 10), pady=(30, 0))
 
             z_label = cst.CTkLabel(
                 master=frame_4,
@@ -179,13 +180,24 @@ class ResultWindow(cst.CTkToplevel):
             )
             r2_label_num.grid(row=2, column=1, padx=(50, 20), pady=(10, 20))
 
+            plot_1_label = cst.CTkLabel(
+                master=abstract_frame,
+                text='DSC curve with indication\nof crystallization process boundaries:',
+                font=self.into_text_font,
+                width=450,
+                height=50,
+                justify=CENTER,
+                fg_color='#FFFFFF'
+            )
+            plot_1_label.grid(row=1, column=0, padx=(20, 20), pady=(20, 10))
+
             frame_5 = cst.CTkFrame(
                 master=abstract_frame,
                 width=450,
-                height=200,
+                height=300,
                 fg_color='#E0E2F0'
             )
-            frame_5.grid(row=1, column=0, padx=(10, 10))
+            frame_5.grid(row=2, column=0, padx=(10, 10))
             plot_1(
                 frame=frame_5,
                 inflection=class_tables_info.inflection,
@@ -193,21 +205,52 @@ class ResultWindow(cst.CTkToplevel):
             )
             frame_4_2 = cst.CTkFrame(
                 master=abstract_frame,
-                width=420,
-                height=260,
+                width=360,
+                height=400,
                 fg_color='#E0E2F0'
             )
-            frame_4_2.grid(row=1, column=1, padx=(10, 10))
+            frame_4_2.grid(row=2, column=1, padx=(60, 10))
+
+            n_exp_text = n_explanation(round(n))
+            n_exp_label = cst.CTkLabel(
+                master=frame_4_2,
+                text=n_exp_text,
+                font=self.into_text_font,
+                width=360,
+                justify=CENTER,
+                anchor=cst.W
+            )
+            n_exp_label.grid(row=0, column=0, padx=(40, 10), pady=(50, 50))
 
             inflections.append(class_tables_info.inflection)
             tables.append(class_tables_info.table)
+            plot_2_label = cst.CTkLabel(
+                master=abstract_frame,
+                text='Graph of dependence of ln ln (1 / (1 - X(t)))\non ln(t) according to the Avrami equation:',
+                font=self.into_text_font,
+                width=400,
+                height=50,
+                justify=CENTER,
+                fg_color='#FFFFFF'
+            )
+            plot_2_label.grid(row=3, column=0, padx=(20, 20), pady=(50, 10))
+            plot_3_label = cst.CTkLabel(
+                master=abstract_frame,
+                text='Evolution of relative crystallinity\nas a function of temperature:',
+                font=self.into_text_font,
+                width=400,
+                height=50,
+                justify=CENTER,
+                fg_color='#FFFFFF'
+            )
+            plot_3_label.grid(row=3, column=1, padx=(20, 20), pady=(50, 10))
             frame_6 = cst.CTkFrame(
                 master=abstract_frame,
                 width=450,
-                height=280,
+                height=400,
                 fg_color='#E0E2F0'
             )
-            frame_6.grid(row=2, column=0, padx=(10, 10))
+            frame_6.grid(row=4, column=0, padx=(10, 10))
             plot_2(
                 frame=frame_6,
                 micro_table=class_tables_info.micro_table
@@ -216,10 +259,10 @@ class ResultWindow(cst.CTkToplevel):
             frame_7 = cst.CTkFrame(
                 master=abstract_frame,
                 width=450,
-                height=280,
+                height=400,
                 fg_color='#E0E2F0'
             )
-            frame_7.grid(row=2, column=1, padx=(10, 10))
+            frame_7.grid(row=4, column=1, padx=(30, 10))
             plot_3(
                 frame=frame_7,
                 trimmed=class_tables_info.trimmed
@@ -234,34 +277,45 @@ class ResultWindow(cst.CTkToplevel):
                 fg_color='#FFFFFF'
             )
             abstract_frame_f.grid(row=0, column=0, padx=(0, 0))
-            frame_8 = cst.CTkFrame(
+            # frame_8 = cst.CTkFrame(
+            #     master=abstract_frame_f,
+            #     width=285,
+            #     height=260,
+            #     fg_color='#E0E2F0'
+            # )
+            # frame_8.grid(row=0, column=0, padx=(10, 10))
+            #
+            # energy_label = cst.CTkLabel(
+            #     master=frame_8,
+            #     text='E',
+            #     font=self.into_text_font,
+            #     width=40,
+            #     justify=CENTER,
+            #     anchor=cst.W
+            # )
+            # energy_label.grid(row=0, column=0, pady=(20, 10), padx=(20, 0))
+            #
+            # energy_label_num = cst.CTkLabel(
+            #     master=frame_8,
+            #     text=str(round(self.master.fridman_energy, 3)),
+            #     font=self.into_text_font,
+            #     width=155,
+            #     height=50,
+            #     justify=CENTER,
+            #     fg_color='#FFFFFF'
+            # )
+            # energy_label_num.grid(row=0, column=1, padx=(50, 20), pady=(20, 10))
+            fridman_plot_label = cst.CTkLabel(
                 master=abstract_frame_f,
-                width=285,
-                height=260,
-                fg_color='#E0E2F0'
-            )
-            frame_8.grid(row=0, column=0, padx=(10, 10))
-
-            energy_label = cst.CTkLabel(
-                master=frame_8,
-                text='E',
+                text='Plots of ln(dX/dt) dependence on inverse temperature at different degrees of crystallinity:',
                 font=self.into_text_font,
-                width=40,
-                justify=CENTER,
-                anchor=cst.W
-            )
-            energy_label.grid(row=0, column=0, pady=(20, 10), padx=(20, 0))
-
-            energy_label_num = cst.CTkLabel(
-                master=frame_8,
-                text=str(round(self.master.fridman_energy, 3)),
-                font=self.into_text_font,
-                width=155,
+                width=400,
                 height=50,
                 justify=CENTER,
                 fg_color='#FFFFFF'
             )
-            energy_label_num.grid(row=0, column=1, padx=(50, 20), pady=(20, 10))
+            fridman_plot_label.grid(row=0, column=0, padx=(10, 10), pady=(30, 0))
+
             frame_9 = cst.CTkFrame(
                 master=abstract_frame_f,
                 width=900,
@@ -273,13 +327,24 @@ class ResultWindow(cst.CTkToplevel):
                 frame=frame_9,
                 fin_dict=self.master.fridman_fin_dict
             )
+
+            table_energy_label = cst.CTkLabel(
+                master=abstract_frame_f,
+                text='The results of calculations of activation energy values using the Friedman method:',
+                font=self.into_text_font,
+                width=400,
+                height=50,
+                justify=CENTER,
+                fg_color='#FFFFFF'
+            )
+            table_energy_label.grid(row=2, column=0, padx=(10, 10), pady=(30, 0))
             frame_10 = cst.CTkFrame(
                 master=abstract_frame_f,
                 width=900,
                 height=600,
                 fg_color='#E0E2F0'
             )
-            frame_10.grid(row=2, column=0, padx=(10, 10), pady=(20, 10))
+            frame_10.grid(row=3, column=0, padx=(10, 10), pady=(10, 10))
 
             energy_table = TableWidget(frame_10, self.master.summary_energy_table_data)
             energy_table.activate_scrollbar()
