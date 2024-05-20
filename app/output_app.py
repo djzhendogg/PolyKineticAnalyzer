@@ -78,7 +78,7 @@ class ResultWindow(cst.CTkToplevel):
                 justify=CENTER,
                 anchor=cst.W
             )
-            file_name_label.grid(row=0, column=0, pady=(10, 10), padx=(10, 0))
+            file_name_label.grid(row=0, column=0, pady=(10, 10), padx=(30, 0))
 
             cs_label = cst.CTkLabel(
                 master=frame_4_1,
@@ -88,7 +88,7 @@ class ResultWindow(cst.CTkToplevel):
                 justify=CENTER,
                 anchor=cst.W
             )
-            cs_label.grid(row=1, column=0, pady=(10, 10), padx=(10, 0))
+            cs_label.grid(row=1, column=0, pady=(10, 10), padx=(30, 0))
 
             cs_temp_label = cst.CTkLabel(
                 master=frame_4_1,
@@ -98,16 +98,16 @@ class ResultWindow(cst.CTkToplevel):
                 justify=CENTER,
                 anchor=cst.W
             )
-            cs_temp_label.grid(row=2, column=0, pady=(10, 10), padx=(10, 0))
+            cs_temp_label.grid(row=2, column=0, pady=(10, 10), padx=(30, 0))
             area_label = cst.CTkLabel(
                 master=frame_4_1,
-                text=f"Area: {class_tables_info.area}",
+                text=f"Area: {round(class_tables_info.area, 4)}",
                 font=self.into_text_font,
                 width=400,
                 justify=CENTER,
                 anchor=cst.W
             )
-            area_label.grid(row=3, column=0, pady=(10, 10), padx=(10, 0))
+            area_label.grid(row=3, column=0, pady=(10, 10), padx=(30, 0))
 
             frame_4 = cst.CTkFrame(
                 master=abstract_frame,
@@ -167,7 +167,7 @@ class ResultWindow(cst.CTkToplevel):
                 justify=CENTER,
                 anchor=cst.W
             )
-            r2_label.grid(row=2, column=0, pady=(10, 50), padx=(20, 0))
+            r2_label.grid(row=2, column=0, pady=(20, 20), padx=(20, 0))
             #
             r2_label_num = cst.CTkLabel(
                 master=frame_4,
@@ -178,7 +178,7 @@ class ResultWindow(cst.CTkToplevel):
                 justify=CENTER,
                 fg_color='#FFFFFF'
             )
-            r2_label_num.grid(row=2, column=1, padx=(50, 20), pady=(10, 20))
+            r2_label_num.grid(row=2, column=1, padx=(50, 20), pady=(20, 20))
 
             plot_1_label = cst.CTkLabel(
                 master=abstract_frame,
@@ -189,7 +189,7 @@ class ResultWindow(cst.CTkToplevel):
                 justify=CENTER,
                 fg_color='#FFFFFF'
             )
-            plot_1_label.grid(row=1, column=0, padx=(20, 20), pady=(20, 10))
+            plot_1_label.grid(row=1, column=0, padx=(40, 20), pady=(20, 10))
 
             frame_5 = cst.CTkFrame(
                 master=abstract_frame,
@@ -233,7 +233,7 @@ class ResultWindow(cst.CTkToplevel):
                 justify=CENTER,
                 fg_color='#FFFFFF'
             )
-            plot_2_label.grid(row=3, column=0, padx=(20, 20), pady=(50, 10))
+            plot_2_label.grid(row=3, column=0, padx=(40, 20), pady=(50, 10))
             plot_3_label = cst.CTkLabel(
                 master=abstract_frame,
                 text='Evolution of relative crystallinity\nas a function of temperature:',
@@ -243,7 +243,7 @@ class ResultWindow(cst.CTkToplevel):
                 justify=CENTER,
                 fg_color='#FFFFFF'
             )
-            plot_3_label.grid(row=3, column=1, padx=(20, 20), pady=(50, 10))
+            plot_3_label.grid(row=3, column=1, padx=(40, 20), pady=(50, 10))
             frame_6 = cst.CTkFrame(
                 master=abstract_frame,
                 width=450,
@@ -347,7 +347,7 @@ class ResultWindow(cst.CTkToplevel):
             frame_10.grid(row=3, column=0, padx=(10, 10), pady=(10, 10))
 
             energy_table = TableWidget(frame_10, self.master.summary_energy_table_data)
-            energy_table.activate_scrollbar()
+            # energy_table.activate_scrollbar()
 
             self.tabview.add('summary')
             summary_frame = cst.CTkScrollableFrame(
@@ -357,15 +357,38 @@ class ResultWindow(cst.CTkToplevel):
                 fg_color='#FFFFFF'
             )
             summary_frame.grid(row=0, column=0, padx=(0, 0))
+
+            table_avrami_label = cst.CTkLabel(
+                master=summary_frame,
+                text='Summary table with the results of calculations of crystallization parameters by Avrami algorithm:',
+                font=self.into_text_font,
+                width=900,
+                height=50,
+                justify=CENTER,
+                fg_color='#FFFFFF'
+            )
+            table_avrami_label.grid(row=0, column=0, columnspan=2, padx=(10, 10), pady=(30, 0))
+
             frame_11 = cst.CTkFrame(
                 master=summary_frame,
-                width=285,
+                width=900,
                 height=100,
                 fg_color='#E0E2F0'
             )
-            frame_11.grid(row=0, column=0, columnspan=2, padx=(10, 10))
-            avrami_summary_table = TableWidget(frame_11, summary_avrami_table_data, visible_rows=6)
+            frame_11.grid(row=1, column=0, columnspan=2, padx=(10, 10))
+            avrami_summary_table = TableWidget(frame_11, summary_avrami_table_data, visible_rows='summary')
             avrami_summary_table.activate_scrollbar()
+
+            graph_1_label = cst.CTkLabel(
+                master=summary_frame,
+                text='Collaborative graph of the\nevolution of relative crystallinity:',
+                font=self.into_text_font,
+                width=450,
+                height=50,
+                justify=CENTER,
+                fg_color='#FFFFFF'
+            )
+            graph_1_label.grid(row=2, column=0, padx=(10, 10), pady=(30, 0))
 
             frame_13 = cst.CTkFrame(
                 master=summary_frame,
@@ -373,22 +396,33 @@ class ResultWindow(cst.CTkToplevel):
                 height=280,
                 fg_color='#E0E2F0'
             )
-            frame_13.grid(row=1, column=0, padx=(10, 10))
+            frame_13.grid(row=3, column=0, padx=(10, 10))
             plot_2(
                 frame=frame_13,
                 micro_table=micro_tables,
                 several=True
             )
+
+            graph_2_label = cst.CTkLabel(
+                master=summary_frame,
+                text='Co-plots the dependence of\nln ln (1 / (1 - Y)) on ln(t)\naccording to the Avrami equation:',
+                font=self.into_text_font,
+                width=450,
+                height=50,
+                justify=CENTER,
+                fg_color='#FFFFFF'
+            )
+            graph_2_label.grid(row=2, column=1, padx=(10, 10), pady=(30, 0))
+
             frame_14 = cst.CTkFrame(
                 master=summary_frame,
                 width=450,
                 height=280,
                 fg_color='#E0E2F0'
             )
-            frame_14.grid(row=1, column=1, padx=(10, 10))
+            frame_14.grid(row=3, column=1, padx=(10, 10))
             plot_3(
                 frame=frame_14,
                 trimmed=trimmed_tables,
                 several=True
             )
-
