@@ -360,11 +360,11 @@ class ResultWindow(cst.CTkToplevel):
             frame_11 = cst.CTkFrame(
                 master=summary_frame,
                 width=285,
-                height=200,
+                height=100,
                 fg_color='#E0E2F0'
             )
             frame_11.grid(row=0, column=0, columnspan=2, padx=(10, 10))
-            avrami_summary_table = TableWidget(frame_11, summary_avrami_table_data)
+            avrami_summary_table = TableWidget(frame_11, summary_avrami_table_data, visible_rows=6)
             avrami_summary_table.activate_scrollbar()
 
             frame_13 = cst.CTkFrame(

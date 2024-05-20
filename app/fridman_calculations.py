@@ -15,8 +15,8 @@ def fridman_calculations_(calculation_results: list[dict]):
         ("Conversion_rate", "E")
     ]
     for pull in calculation_results:
-        trimmed_1 = pull['cl'].trimmed[pull['cl'].trimmed['Conversion_rate'] >= 0.1]
-        trimmed_1 = trimmed_1[trimmed_1['Conversion_rate'] >= 0.1]
+        trimmed_1 = pull['cl'].trimmed
+        trimmed_1['Temp'] = trimmed_1['Temp'] + 273.15
         x_conrate = trimmed_1['Conversion_rate'].to_numpy()
         y_temp = trimmed_1['Temp'].to_numpy()
 
@@ -25,7 +25,7 @@ def fridman_calculations_(calculation_results: list[dict]):
         y_temp_new = conrate_temp_polifit_param_func(conv_rate_base)
         db_new = pd.DataFrame()
         db_new['Conversion_rate'] = conv_rate_base
-        db_new['Temp'] = y_temp_new + 273.15
+        db_new['Temp'] = y_temp_new
 
         x_temp = 1000 / y_temp
         y_ln_area_per_time = trimmed_1['ln_Partial_aria_per_Time'].to_numpy()
@@ -44,7 +44,7 @@ def fridman_calculations_(calculation_results: list[dict]):
         x = value.get('x')
         y = value.get('y')
         res = stats.linregress(x, y)
-        energy = res.slope / 8.314
+        energy = res.slope * -8.314
         out_energy += energy
         summary_energy_table_data.append((key, round(energy, 3)))
     return fin_dict, out_energy, summary_energy_table_data

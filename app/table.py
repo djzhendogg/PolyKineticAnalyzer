@@ -4,12 +4,12 @@ import customtkinter as cst
 
 
 class TableWidget(cst.CTkFrame):
-    def __init__(self, parent, table_data):
+    def __init__(self, parent, table_data, visible_rows=15):
         super().__init__(master=parent)
 
         table_columns = tuple((i.lower() for i in table_data[0]))
         self.table = ttk.Treeview(
-            self, columns=table_columns, show="headings", padding=20
+            self, columns=table_columns, show="headings", padding=10, height=visible_rows
         )
 
         for i in table_columns:
