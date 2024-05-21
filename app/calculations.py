@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 import re
 from scipy import stats
+import time
 
 
 class Calculations:
@@ -141,5 +142,7 @@ class Calculations:
 
 
 if __name__ == "__main__":
+    start_time = time.time()
     r = Calculations(filepath='data/PBS_15Kmin.txt', cool_speed=15).calculate()
-    print(r)
+    end_time = time.time()
+    print(end_time - start_time)

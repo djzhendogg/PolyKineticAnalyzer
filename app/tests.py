@@ -1,42 +1,59 @@
-from tkinter import *
+import customtkinter as ctk
 
-#------------------------------------
+class App:
+    def __init__(self):
+        self.root = ctk.CTk()
+        self.root.geometry("400x400")
+        self.root.title("File Manager")
 
-def addBox():
-    print("ADD")
+        self.files = []
+        self.file_labels = []
+        self.delete_buttons = []
 
-    frame = Frame(root)
-    frame.pack()
+        # Создать фрейм для отображения файлов
+        self.files_frame = ctk.CTkFrame(self.root)
+        self.files_frame.pack(pady=20)
 
-    Label(frame, text='From').grid(row=0, column=0)
+        # Добавить кнопку для открытия файлового каталога
+        self.open_button = ctk.CTkButton(self.root, text="Open Files", command=self.open_files)
+        self.open_button.pack(pady=20)
 
-    ent1 = Entry(frame)
-    ent1.grid(row=1, column=0)
+    def open_files(self):
+        # Открыть файловый каталог и получить список выбранных файлов
+        files = ctk.filedialog.askopenfilenames()
 
-    Label(frame, text='To').grid(row=0, column=1)
+        # Добавить названия файлов в фрейм для отображения файлов
+        for index, file in enumerate(files):
+            file_label = ctk.CTkLabel(self.files_frame, text=f"{index+1}. {file}")
+            file_label.pack(side="top", padx=10, pady=5)
 
-    ent2 = Entry(frame)
-    ent2.grid(row=1, column=1)
+            # Добавить кнопку "delete" рядом с каждым названием файла
+            delete_button = ctk.CTkButton(self.files_frame, text="Delete", command=lambda file=file: self.delete_file(file))
+            delete_button.pack(side="right", padx=10)
 
-    all_entries.append( (ent1, ent2) )
+            # Сохранить ссылки на метки и кнопки для дальнейшего использования
+            self.files.append(file)
+            self.file_labels.append(file_label)
+            self.delete_buttons.append(delete_button)
 
-#------------------------------------
+    def delete_file(self, file):
+        # Получить индекс удаляемого файла
+        index = self.files.index(file)
 
-def showEntries():
+        # Удалить метку и кнопку "delete"
+        self.file_labels[index].destroy()
+        self.delete_buttons[index].destroy()
 
-    for number, (ent1, ent2) in enumerate(all_entries):
-        print(number, ent1.get(), ent2.get())
+        # Обновить список файлов и меток
+        self.files.pop(index)
+        self.file_labels.pop(index)
+        self.delete_buttons.pop(index)
 
-#------------------------------------
+        # Перестроить оставшиеся файлы
+        for i in range(len(self.files)):
+            self.file_labels[i].configure(text=f"{i+1}. {self.files[i]}")
 
-all_entries = []
 
-root = Tk()
-
-showButton = Button(root, text='Show all text', command=showEntries)
-showButton.pack()
-
-addboxButton = Button(root, text='<Add Time Input>', fg="Red", command=addBox)
-addboxButton.pack()
-
-root.mainloop()
+if __name__ == "__main__":
+    app = App()
+    app.root.mainloop()

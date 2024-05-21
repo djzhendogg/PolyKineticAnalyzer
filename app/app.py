@@ -248,11 +248,9 @@ class App(cst.CTk):
 
     def addBox(self):
         def openfile():
-            filepath = filedialog.askopenfilename(
+            filepath = filedialog.askopenfilenames(
                 title="Open file okay?",
-                filetypes=(
-                    ("text files", "*.txt"), ("all files", "*.*")
-                )
+                filetypes=(("text files", "*.txt"))
             )
             filepath_n = str(filepath).split('/')
             filepath_lable.configure(text=filepath_n[-1])
