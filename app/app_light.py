@@ -1,6 +1,7 @@
 from tkinter import *
 from tkinter import filedialog
 import customtkinter as cst
+from CTkXYFrame import *
 from base_frames import uploaded_files_names
 from calculations import Calculations
 from output_app import ResultWindow
@@ -32,21 +33,21 @@ class App(cst.CTk):
         self.into_text_font = cst.CTkFont(family="Bahnschrift SemiBold", size=20)
         self.show_fridman: bool = False
         self.title('PolyKineticAnalyzer')
-        self.geometry("1000x700")
+        self.geometry("1200x700")
 
         self.file_upload_label = cst.CTkLabel(
             master=self,
             text='File Uploading',
-            width=130,
+            width=80,
             font=self.label_font,
             justify=LEFT,
             anchor=cst.W
         )
-        self.file_upload_label.grid(row=0, column=0, padx=(0, 10))
+        self.file_upload_label.grid(row=0, column=0, padx=(0, 10), pady=(40, 0))
         self.add_files_label = cst.CTkLabel(
             master=self,
             text='Add Files',
-            width=130,
+            width=80,
             font=self.label_font,
             justify=CENTER,
             anchor=cst.W
@@ -67,19 +68,27 @@ class App(cst.CTk):
 
         self.plus_button.grid(row=1, column=1, padx=(40, 10), pady=10, sticky='w')
         self.left_frame()
+        self.right_frame()
 
     def left_frame(self):
-        self.frame_1 = cst.CTkScrollableFrame(
+        self.frame_1 = CTkXYFrame(
             master=self,
             width=420,
-            height=500,
+            height=250,
             fg_color='#FFFFFF'
         )
         self.frame_1.grid(row=2, column=0, padx=(40, 10), columnspan=2, pady=(30, 0), sticky='w')
 
 
+
     def right_frame(self):
-        return
+        self.frame_instraction = CTkXYFrame(
+            master=self,
+            width=600,
+            height=600,
+            fg_color='#FFFFFF'
+        )
+        self.frame_instraction.grid(row=0, column=3, padx=(40, 10), rowspan=4, pady=(30, 0), sticky='w')
 
     def openfile(self):
 
