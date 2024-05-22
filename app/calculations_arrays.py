@@ -25,7 +25,7 @@ class Calculations:
 
         self.cool_speed = 0
         self.cool_speed_units = 'K/min'
-
+        self.show_error = ''
         self.table_in_list = []
         self.temp_array = None
         self.table_array = None
@@ -40,101 +40,122 @@ class Calculations:
             self.table_in_list = [bacteria.replace('\n', '') for bacteria in file]
 
         self.take_df()
+        if self.show_error != '':
+            return self.show_error, None, None, None
+
         self.find_inflections()
+        if self.show_error != '':
+            return self.show_error, None, None, None
 
         self.find_area()
+        if self.show_error != '':
+            return self.show_error, None, None, None
 
         z, n, r2 = self.define_kinetic_param()
-        return z, n, r2
+        return None, z, n, r2
 
     def take_df(
         self
     ):
-        self.cool_speed, self.cool_speed_units, self.table_array = parser_2(self.table_in_list)
-        self.temp_array = self.table_array[:, 0]
-        self.time_array = self.table_array[:, 1]
-        self.dsc_array = self.table_array[:, 2]
+        try:
+            self.cool_speed, self.cool_speed_units, self.table_array = parser_2(self.table_in_list)
+            self.temp_array = self.table_array[:, 0]
+            self.time_array = self.table_array[:, 1]
+            self.dsc_array = self.table_array[:, 2]
+        except:
+            self.show_error = 'file_read_error'
 
     def find_inflections(
             self
     ):
-        grad = np.gradient(np.gradient(self.dsc_array, self.temp_array), self.temp_array)
-        # 3 - grad
-        self.table_array = np.c_[self.table_array, grad]
-        top_mask = self.table_array[:, 2] == min(self.dsc_array)
-        cristal_temp_row = self.table_array[top_mask, :][:, 0]
-        self.cristal_temp = cristal_temp_row[0]
-        max_temp_id = np.asarray(top_mask).nonzero()[0][0]
-        first_table = self.table_array[:max_temp_id]
-        second_table = self.table_array[max_temp_id:]
-        firs_grad_min = min(abs(first_table[:, 3]))
-        sec_grad_min = min(abs(second_table[:, 3]))
-        first_min_top_mask = abs(first_table[:, 3]) == firs_grad_min
-        second_min_top_mask = abs(second_table[:, 3]) == sec_grad_min
-        self.first_min = first_table[first_min_top_mask]
-        first_min_id = np.asarray(first_min_top_mask).nonzero()[0][0]
-        self.second_min = second_table[second_min_top_mask]
-        second_min_id = first_table.shape[0] + np.asarray(second_min_top_mask).nonzero()[0][0]
-        self.inflection = np.r_[self.first_min, self.second_min]
-        self.micro_table = self.table_array[first_min_id:second_min_id + 1]
+        try:
+            grad = np.gradient(np.gradient(self.dsc_array, self.temp_array), self.temp_array)
+            # 3 - grad
+            self.table_array = np.c_[self.table_array, grad]
+            top_mask = self.table_array[:, 2] == min(self.dsc_array)
+            cristal_temp_row = self.table_array[top_mask, :][:, 0]
+            self.cristal_temp = cristal_temp_row[0]
+            max_temp_id = np.asarray(top_mask).nonzero()[0][0]
+            first_table = self.table_array[:max_temp_id]
+            second_table = self.table_array[max_temp_id:]
+            firs_grad_min = min(abs(first_table[:, 3]))
+            sec_grad_min = min(abs(second_table[:, 3]))
+            first_min_top_mask = abs(first_table[:, 3]) == firs_grad_min
+            second_min_top_mask = abs(second_table[:, 3]) == sec_grad_min
+            self.first_min = first_table[first_min_top_mask]
+            first_min_id = np.asarray(first_min_top_mask).nonzero()[0][0]
+            self.second_min = second_table[second_min_top_mask]
+            second_min_id = first_table.shape[0] + np.asarray(second_min_top_mask).nonzero()[0][0]
+            self.inflection = np.r_[self.first_min, self.second_min]
+            self.micro_table = self.table_array[first_min_id:second_min_id + 1]
+        except:
+            self.show_error = 'define_inflections_error'
+
 
     def find_area(
             self
     ):
-        start_x = self.first_min[:, 0]
-        start_y = self.first_min[:, 2]
-        stop_x = self.second_min[:, 0]
-        stop_y = self.second_min[:, 2]
-        line_array_len = self.micro_table.shape[0]
-        temp_bottom = np.linspace(start_x[0], stop_x[0], num=line_array_len)
-        dsc_bottom = np.linspace(start_y[0], stop_y[0], num=line_array_len)
-        partial_aria = []
-        for i in range(line_array_len - 1):
-            sample = self.micro_table[i]
-            smaple_plus_one = self.micro_table[i + 1]
-            h = abs(np.average([sample[2], smaple_plus_one[2]]) - np.average(
-                [dsc_bottom[i], dsc_bottom[i+1]]))
-            a = smaple_plus_one[0] - sample[0]
-            self.area += a * h
-            partial_aria.append(self.area)
-        partial_aria = np.append([0], np.asarray(partial_aria))
-        # 4 - partial_aria
-        self.micro_table = np.c_[self.micro_table, partial_aria]
-        conversion_rate = 1 - partial_aria / self.area
-        # 5 - conversion_rate
-        self.micro_table = np.c_[self.micro_table, conversion_rate]
+        try:
+            start_x = self.first_min[:, 0]
+            start_y = self.first_min[:, 2]
+            stop_x = self.second_min[:, 0]
+            stop_y = self.second_min[:, 2]
+            line_array_len = self.micro_table.shape[0]
+            temp_bottom = np.linspace(start_x[0], stop_x[0], num=line_array_len)
+            dsc_bottom = np.linspace(start_y[0], stop_y[0], num=line_array_len)
+            partial_aria = []
+            for i in range(line_array_len - 1):
+                sample = self.micro_table[i]
+                smaple_plus_one = self.micro_table[i + 1]
+                h = abs(np.average([sample[2], smaple_plus_one[2]]) - np.average(
+                    [dsc_bottom[i], dsc_bottom[i+1]]))
+                a = smaple_plus_one[0] - sample[0]
+                self.area += a * h
+                partial_aria.append(self.area)
+            partial_aria = np.append([0], np.asarray(partial_aria))
+            # 4 - partial_aria
+            self.micro_table = np.c_[self.micro_table, partial_aria]
+            conversion_rate = 1 - partial_aria / self.area
+            # 5 - conversion_rate
+            self.micro_table = np.c_[self.micro_table, conversion_rate]
 
-        t_onset = self.micro_table[:, 1][-1]
-        t_list = self.micro_table[:, 1] - t_onset
-        # 6 - real_time
-        self.micro_table = np.c_[self.micro_table, t_list]
-        return self.area, self.micro_table
+            t_onset = self.micro_table[:, 1][-1]
+            t_list = self.micro_table[:, 1] - t_onset
+            # 6 - real_time
+            self.micro_table = np.c_[self.micro_table, t_list]
+        except:
+            self.show_error = 'define_area_error'
+
 
     def define_kinetic_param(
             self
     ):
-        self.micro_table = self.micro_table[1:-1]
-        ln_min_ln_conversion_rate = np.log(-np.log(1 - self.micro_table[:, 5]))
-        ln_time = np.log(abs(self.micro_table[:, 6]))
-        # 7 - ln_min_ln_conversion_rate
-        # 8 - ln_time
-        self.micro_table = np.c_[self.micro_table, ln_min_ln_conversion_rate, ln_time]
-        self.micro_table = self.micro_table[~np.isinf(self.micro_table).any(1)]
-        res = stats.linregress(self.micro_table[:, 8], self.micro_table[:, 7])
-        z = np.exp(res.intercept/self.cool_speed)
-        n = res.slope
-        r2 = res.rvalue ** 2
-        time = self.micro_table[:, 1]
-        con_rate = self.micro_table[:, 5]
-        grad = np.gradient(con_rate, time)
-        ln_partial_aria_per_time = np.log(abs(grad))
-        # 9 - ln_Partial_aria_per_Time
-        self.micro_table = np.c_[self.micro_table, ln_partial_aria_per_time]
-        return z, n, r2
+        try:
+            self.micro_table = self.micro_table[1:-1]
+            ln_min_ln_conversion_rate = np.log(-np.log(1 - self.micro_table[:, 5]))
+            ln_time = np.log(abs(self.micro_table[:, 6]))
+            # 7 - ln_min_ln_conversion_rate
+            # 8 - ln_time
+            self.micro_table = np.c_[self.micro_table, ln_min_ln_conversion_rate, ln_time]
+            self.micro_table = self.micro_table[~np.isinf(self.micro_table).any(1)]
+            res = stats.linregress(self.micro_table[:, 8], self.micro_table[:, 7])
+            z = np.exp(res.intercept/self.cool_speed)
+            n = res.slope
+            r2 = res.rvalue ** 2
+            time = self.micro_table[:, 1]
+            con_rate = self.micro_table[:, 5]
+            grad = np.gradient(con_rate, time)
+            ln_partial_aria_per_time = np.log(abs(grad))
+            # 9 - ln_Partial_aria_per_Time
+            self.micro_table = np.c_[self.micro_table, ln_partial_aria_per_time]
+            return z, n, r2
+        except:
+            self.show_error = 'define_kinetic_param_error'
+            return None, None, None
 
 
 if __name__ == "__main__":
     start_time = time.time()
-    r = Calculations(filepath='data/PBS_15Kmin.txt').calculate()
+    r = Calculations(filepath='data/pbs/PBS_15Kmin.txt').calculate()
     end_time = time.time()
     print(end_time - start_time)

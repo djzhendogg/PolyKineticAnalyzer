@@ -272,6 +272,7 @@ class ResultWindow(cst.CTkToplevel):
             )
             # trimmed_tables.append(class_tables_info.micro_table)
         if self.master.show_fridman:
+
             self.tabview.add('fridman')
             abstract_frame_f = cst.CTkScrollableFrame(
                 master=self.tabview.tab('fridman'),

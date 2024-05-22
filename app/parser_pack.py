@@ -60,7 +60,7 @@ def parser_2(
         for symbol in symbols_to_remove:
             name = name.replace(symbol, "")
         if name == 'Temp':
-            measer_units[name] = spl_un[1][1]
+            measer_units[name] = spl_un[1][-1]
         elif name == 'DSC' or name == 'Sensit':
             val = spl_un[1] + '/' + spl_un[2]
             for symbol in symbols_to_remove:
@@ -104,7 +104,7 @@ def parser_2(
 
 
 if __name__ == "__main__":
-    with open(r'data/PBS_10Kmin.txt', 'r', encoding='latin-1') as file:
+    with open(r'data/pbs/PBS_10Kmin.txt', 'r', encoding='latin-1') as file:
         table_in_list = [bacteria.replace('\n', '') for bacteria in file]
     rate, table_array = parser_2(table_in_list)
     print(rate)

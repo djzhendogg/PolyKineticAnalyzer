@@ -6,6 +6,7 @@ from instruction import instruction_text
 from calculations_arrays import Calculations
 from output_app import ResultWindow
 from fridman_calculations_array import fridman_calculations_
+from error_text_maker import define_error_text
 
 cst.deactivate_automatic_dpi_awareness()
 
@@ -21,7 +22,7 @@ class App(cst.CTk):
         self.file_names_short: list = []
 
         self.num_sample_ever = 0
-
+        self.frame_error = cst.CTkFrame(master=self)
         self.instruction_frame = None
         self.toplevel_window = None
         self.frame_1 = None
@@ -115,7 +116,7 @@ class App(cst.CTk):
         n_exp_label.pack(side="top", padx=30, pady=5)
 
     def openfile(self):
-
+        self.frame_error.destroy()
         filepaths = filedialog.askopenfilenames(
             title="Open file okay?",
             filetypes=(
@@ -155,6 +156,7 @@ class App(cst.CTk):
                 self.delete_buttons.append(delete_row_button)
 
     def delete_file(self, file):
+        self.frame_error.destroy()
         # Получить индекс удаляемого файла
         index = self.files.index(file)
 
@@ -173,11 +175,30 @@ class App(cst.CTk):
             self.file_labels[i].configure(text=f"{i + 1}. {self.file_names_short[i]}")
 
     def enter_calculate(self):
+        self.frame_error.destroy()
         self.calculation_results: list = []
-        for path_to_file in self.files:
+        for path_to_file, file_name in zip(self.files, self.file_names_short):
             calculation_results_dict: dict = {}
             calculated_cl = Calculations(filepath=path_to_file)
-            z, n, r2 = calculated_cl.calculate()
+            error_info, z, n, r2 = calculated_cl.calculate()
+            if error_info is not None:
+                self.frame_error = cst.CTkFrame(
+                    master=self,
+                    width=420,
+                    height=200,
+                    fg_color='#F99595'
+                )
+                self.frame_error.grid(row=4, column=0, padx=(40, 10), columnspan=2, pady=(30, 0), sticky='w')
+                error_text = define_error_text(error_info, file_name)
+                n_exp_label = cst.CTkLabel(
+                    master=self.frame_error,
+                    text=error_text,
+                    font=self.instruction_text_font,
+                    width=360,
+                    justify='center'
+                )
+                n_exp_label.pack(side="top", padx=30, pady=5)
+                return
             calculation_results_dict['cl'] = calculated_cl
             calculation_results_dict['z'] = z
             calculation_results_dict['n'] = n
@@ -186,11 +207,48 @@ class App(cst.CTk):
         if len(self.calculation_results) > 1:
             self.show_fridman = True
             (
+                error_info,
                 self.fridman_fin_dict,
                 self.summary_energy_table_data
             ) = fridman_calculations_(self.calculation_results)
-        self.toplevel_window = ResultWindow(self)
-        self.toplevel_window.after(10, self.toplevel_window.lift)
+            if error_info is not None:
+                self.frame_error = cst.CTkFrame(
+                    master=self,
+                    width=420,
+                    height=200,
+                    fg_color='#F99595'
+                )
+                self.frame_error.grid(row=4, column=0, padx=(40, 10), columnspan=2, pady=(30, 0), sticky='w')
+                error_text = define_error_text(error_info, None)
+                n_exp_label = cst.CTkLabel(
+                    master=self.frame_error,
+                    text=error_text,
+                    font=self.instruction_text_font,
+                    width=360,
+                    justify='center'
+                )
+                n_exp_label.pack(side="top", padx=30, pady=5)
+                return
+        try:
+            self.toplevel_window = ResultWindow(self)
+            self.toplevel_window.after(10, self.toplevel_window.lift)
+        except:
+            self.frame_error = cst.CTkFrame(
+                master=self,
+                width=420,
+                height=200,
+                fg_color='#F99595'
+            )
+            self.frame_error.grid(row=4, column=0, padx=(40, 10), columnspan=2, pady=(30, 0), sticky='w')
+            n_exp_label = cst.CTkLabel(
+                master=self.frame_error,
+                text='Error displaying plots and result info.',
+                font=self.instruction_text_font,
+                width=360,
+                justify='center'
+            )
+            n_exp_label.pack(side="top", padx=30, pady=5)
+            return
 
 
 if __name__ == "__main__":
