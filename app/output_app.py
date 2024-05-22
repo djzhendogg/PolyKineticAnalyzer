@@ -4,7 +4,10 @@ from plots import (
     plot_1,
     plot_2,
     plot_3,
-    plot_fridman
+    plot_fridman,
+    evolution_plot_summary,
+    avrami_plot_summary,
+    dsc_plot_summary
 )
 from table import TableWidget
 from explanation_taker import n_explanation
@@ -38,19 +41,19 @@ class ResultWindow(cst.CTkToplevel):
         )
         self.tabview.pack()
         summary_avrami_table_data = [
-            ('rate', 'z', 'n', 'r2')
+            ('rate, K/min', 'z', 'n', 'r2')
         ]
         inflections = []
         tables = []
         micro_tables = []
-        trimmed_tables = []
+        tab_name_list = []
         for number, data_info in enumerate(self.master.calculation_results):
             class_tables_info = data_info.get('cl')
             z = data_info.get('z')
             n = data_info.get('n')
             r2 = data_info.get('r2')
-            # tab_name = f'tab {number + 1}'
             tab_name = f'{class_tables_info.cool_speed} {class_tables_info.cool_speed_units}'
+            tab_name_list.append(tab_name)
             summary_avrami_table_data.append(
                 (round(data_info['cl'].cool_speed, 1), round(z, 3), round(n, 3), round(r2, 3))
             )
@@ -201,7 +204,7 @@ class ResultWindow(cst.CTkToplevel):
             plot_1(
                 frame=frame_5,
                 inflection=class_tables_info.inflection,
-                table=class_tables_info.table
+                table=class_tables_info.table_array
             )
             frame_4_2 = cst.CTkFrame(
                 master=abstract_frame,
@@ -223,7 +226,7 @@ class ResultWindow(cst.CTkToplevel):
             n_exp_label.grid(row=0, column=0, padx=(40, 10), pady=(50, 50))
 
             inflections.append(class_tables_info.inflection)
-            tables.append(class_tables_info.table)
+            tables.append(class_tables_info.table_array)
             plot_2_label = cst.CTkLabel(
                 master=abstract_frame,
                 text='Graph of dependence of ln ln (1 / (1 - X(t)))\non ln(t) according to the Avrami equation:',
@@ -265,9 +268,9 @@ class ResultWindow(cst.CTkToplevel):
             frame_7.grid(row=4, column=1, padx=(30, 10))
             plot_3(
                 frame=frame_7,
-                trimmed=class_tables_info.trimmed
+                trimmed=class_tables_info.micro_table
             )
-            trimmed_tables.append(class_tables_info.trimmed)
+            # trimmed_tables.append(class_tables_info.micro_table)
         if self.master.show_fridman:
             self.tabview.add('fridman')
             abstract_frame_f = cst.CTkScrollableFrame(
@@ -277,34 +280,6 @@ class ResultWindow(cst.CTkToplevel):
                 fg_color='#FFFFFF'
             )
             abstract_frame_f.grid(row=0, column=0, padx=(0, 0))
-            # frame_8 = cst.CTkFrame(
-            #     master=abstract_frame_f,
-            #     width=285,
-            #     height=260,
-            #     fg_color='#E0E2F0'
-            # )
-            # frame_8.grid(row=0, column=0, padx=(10, 10))
-            #
-            # energy_label = cst.CTkLabel(
-            #     master=frame_8,
-            #     text='E',
-            #     font=self.into_text_font,
-            #     width=40,
-            #     justify=CENTER,
-            #     anchor=cst.W
-            # )
-            # energy_label.grid(row=0, column=0, pady=(20, 10), padx=(20, 0))
-            #
-            # energy_label_num = cst.CTkLabel(
-            #     master=frame_8,
-            #     text=str(round(self.master.fridman_energy, 3)),
-            #     font=self.into_text_font,
-            #     width=155,
-            #     height=50,
-            #     justify=CENTER,
-            #     fg_color='#FFFFFF'
-            # )
-            # energy_label_num.grid(row=0, column=1, padx=(50, 20), pady=(20, 10))
             fridman_plot_label = cst.CTkLabel(
                 master=abstract_frame_f,
                 text='Plots of ln(dX/dt) dependence on inverse temperature at different degrees of crystallinity:',
@@ -347,7 +322,6 @@ class ResultWindow(cst.CTkToplevel):
             frame_10.grid(row=3, column=0, padx=(10, 10), pady=(10, 10))
 
             energy_table = TableWidget(frame_10, self.master.summary_energy_table_data)
-            # energy_table.activate_scrollbar()
 
             self.tabview.add('summary')
             summary_frame = cst.CTkScrollableFrame(
@@ -367,7 +341,7 @@ class ResultWindow(cst.CTkToplevel):
                 justify=CENTER,
                 fg_color='#FFFFFF'
             )
-            table_avrami_label.grid(row=0, column=0, columnspan=2, padx=(10, 10), pady=(30, 0))
+            table_avrami_label.grid(row=0, column=0,padx=(10, 10), pady=(30, 0))
 
             frame_11 = cst.CTkFrame(
                 master=summary_frame,
@@ -375,54 +349,76 @@ class ResultWindow(cst.CTkToplevel):
                 height=100,
                 fg_color='#E0E2F0'
             )
-            frame_11.grid(row=1, column=0, columnspan=2, padx=(10, 10))
+            frame_11.grid(row=1, column=0, padx=(10, 10))
             avrami_summary_table = TableWidget(frame_11, summary_avrami_table_data, visible_rows='summary')
             avrami_summary_table.activate_scrollbar()
-
-            graph_1_label = cst.CTkLabel(
+            graph_0_label = cst.CTkLabel(
                 master=summary_frame,
-                text='Collaborative graph of the\nevolution of relative crystallinity:',
+                text='Collaborative graph of DSC curves:',
                 font=self.into_text_font,
-                width=450,
+                width=900,
                 height=50,
                 justify=CENTER,
                 fg_color='#FFFFFF'
             )
-            graph_1_label.grid(row=2, column=0, padx=(10, 10), pady=(30, 0))
-
-            frame_13 = cst.CTkFrame(
+            graph_0_label.grid(row=2, column=0, padx=(40, 20), pady=(20, 10))
+            frame_13_0 = cst.CTkFrame(
                 master=summary_frame,
-                width=450,
+                width=900,
                 height=280,
                 fg_color='#E0E2F0'
             )
-            frame_13.grid(row=3, column=0, padx=(10, 10))
-            plot_2(
+            frame_13_0.grid(row=3, column=0, padx=(10, 10))
+            dsc_plot_summary(
+                frame=frame_13_0,
+                table=tables,
+                tab_name_list=tab_name_list
+            )
+
+            graph_1_label = cst.CTkLabel(
+                master=summary_frame,
+                text='Collaborative graph of the evolution of relative crystallinity:',
+                font=self.into_text_font,
+                width=900,
+                height=50,
+                justify=CENTER,
+                fg_color='#FFFFFF'
+            )
+            graph_1_label.grid(row=4, column=0, padx=(10, 10), pady=(30, 0))
+
+            frame_13 = cst.CTkFrame(
+                master=summary_frame,
+                width=900,
+                height=280,
+                fg_color='#E0E2F0'
+            )
+            frame_13.grid(row=5, column=0, padx=(10, 10))
+            avrami_plot_summary(
                 frame=frame_13,
                 micro_table=micro_tables,
-                several=True
+                tab_name_list=tab_name_list
             )
 
             graph_2_label = cst.CTkLabel(
                 master=summary_frame,
-                text='Co-plots the dependence of\nln ln (1 / (1 - Y)) on ln(t)\naccording to the Avrami equation:',
+                text='Co-plots the dependence of ln ln (1 / (1 - Y)) on ln(t) according to the Avrami equation:',
                 font=self.into_text_font,
-                width=450,
+                width=900,
                 height=50,
                 justify=CENTER,
                 fg_color='#FFFFFF'
             )
-            graph_2_label.grid(row=2, column=1, padx=(10, 10), pady=(30, 0))
+            graph_2_label.grid(row=6, column=0, padx=(10, 10), pady=(30, 0))
 
             frame_14 = cst.CTkFrame(
                 master=summary_frame,
-                width=450,
+                width=900,
                 height=280,
                 fg_color='#E0E2F0'
             )
-            frame_14.grid(row=3, column=1, padx=(10, 10))
-            plot_3(
+            frame_14.grid(row=7, column=0, padx=(10, 10))
+            evolution_plot_summary(
                 frame=frame_14,
-                trimmed=trimmed_tables,
-                several=True
+                trimmed=micro_tables,
+                tab_name_list=tab_name_list
             )

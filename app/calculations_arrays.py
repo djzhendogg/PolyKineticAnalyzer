@@ -22,9 +22,14 @@ class Calculations:
     """
     def __init__(self, **kwargs):
         self.filepath = kwargs.get('filepath', '')
+
         self.cool_speed = 0
+        self.cool_speed_units = 'K/min'
+
         self.table_in_list = []
         self.temp_array = None
+        self.table_array = None
+
         self.cristal_temp: int = 0
         self.area: int = 0
 
@@ -45,7 +50,7 @@ class Calculations:
     def take_df(
         self
     ):
-        self.cool_speed, self.table_array = parser_2(self.table_in_list)
+        self.cool_speed, self.cool_speed_units, self.table_array = parser_2(self.table_in_list)
         self.temp_array = self.table_array[:, 0]
         self.time_array = self.table_array[:, 1]
         self.dsc_array = self.table_array[:, 2]
@@ -70,6 +75,7 @@ class Calculations:
         first_min_id = np.asarray(first_min_top_mask).nonzero()[0][0]
         self.second_min = second_table[second_min_top_mask]
         second_min_id = first_table.shape[0] + np.asarray(second_min_top_mask).nonzero()[0][0]
+        self.inflection = np.r_[self.first_min, self.second_min]
         self.micro_table = self.table_array[first_min_id:second_min_id + 1]
 
     def find_area(

@@ -48,6 +48,7 @@ def parser_2(
     range_list_1 = range_list[1].split('(')
     rate_time_unit = range_list[2].replace(')', "")
     rate_num = float(range_list_1[0])
+    rate_units = range_list_1[1] + '/' + rate_time_unit
 
     unit_list = dsc_list[num_of_table].split(';')
     measer_units = {}
@@ -99,7 +100,7 @@ def parser_2(
         rows_array[:, 0] -= float(273.15)
     if table_time_sec:
         rows_array[:, 1] /= 60
-    return rate_num, rows_array[:, :3]
+    return rate_num, rate_units, rows_array[:, :3]
 
 
 if __name__ == "__main__":
