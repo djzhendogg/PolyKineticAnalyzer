@@ -1,8 +1,6 @@
-import pandas as pd
 import numpy as np
-import re
 from scipy import stats
-from parser_pack import parser_2
+from .parser_pack import parser_2
 import time
 
 

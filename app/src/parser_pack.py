@@ -69,8 +69,6 @@ def parser_2(
         else:
             measer_units[name] = spl_un[1]
 
-    # dsc_ok = valid_dsc_unit(measer_units['DSC'])
-
     min_bool, table_time_sec, rate_time_sec, temp_c, temp_k = valid_units(
         measer_units['Time'], rate_time_unit, measer_units['Temp']
     )
@@ -103,10 +101,9 @@ def parser_2(
     return rate_num, rate_units, rows_array[:, :3]
 
 
-if __name__ == "__main__":
-    with open(r'data/pbs/PBS_10Kmin.txt', 'r', encoding='latin-1') as file:
-        table_in_list = [bacteria.replace('\n', '') for bacteria in file]
-    rate, table_array = parser_2(table_in_list)
-    print(rate)
-    print(table_array)
-
+# if __name__ == "__main__":
+#     with open(r'data/pbs/PBS_10Kmin.txt', 'r', encoding='latin-1') as file:
+#         table_in_list = [bacteria.replace('\n', '') for bacteria in file]
+#     rate, table_array = parser_2(table_in_list)
+#     print(rate)
+#     print(table_array)

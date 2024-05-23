@@ -1,6 +1,6 @@
 import customtkinter as cst
 from tkinter import *
-from plots import (
+from app.utils.plots import (
     plot_1,
     plot_2,
     plot_3,
@@ -9,8 +9,8 @@ from plots import (
     avrami_plot_summary,
     dsc_plot_summary
 )
-from table import TableWidget
-from explanation_taker import n_explanation
+from app.utils.table import TableWidget
+from app.utils.explanation_taker import n_explanation
 cst.set_appearance_mode('light')
 cst.set_default_color_theme('dark-blue')
 cst.deactivate_automatic_dpi_awareness()
@@ -229,7 +229,7 @@ class ResultWindow(cst.CTkToplevel):
             tables.append(class_tables_info.table_array)
             plot_2_label = cst.CTkLabel(
                 master=abstract_frame,
-                text='Graph of dependence of ln ln (1 / (1 - X(t)))\non ln(t) according to the Avrami equation:',
+                text='Evolution of relative crystallinity\nas a function of temperature:',
                 font=self.into_text_font,
                 width=400,
                 height=50,
@@ -239,7 +239,7 @@ class ResultWindow(cst.CTkToplevel):
             plot_2_label.grid(row=3, column=0, padx=(40, 20), pady=(50, 10))
             plot_3_label = cst.CTkLabel(
                 master=abstract_frame,
-                text='Evolution of relative crystallinity\nas a function of temperature:',
+                text='Graph of dependence of ln ln (1 / (1 - X(t)))\non ln(t) according to the Avrami equation:',
                 font=self.into_text_font,
                 width=400,
                 height=50,

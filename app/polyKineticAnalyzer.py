@@ -2,11 +2,11 @@ from tkinter import *
 from tkinter import filedialog
 import customtkinter as cst
 from CTkXYFrame import *
-from instruction import instruction_text
-from calculations_arrays import Calculations
-from output_app import ResultWindow
-from fridman_calculations_array import fridman_calculations_
-from error_text_maker import define_error_text
+from app.utils.texts import instruction_text
+from app.src.calculations_arrays import Calculations
+from app.src.output_app import ResultWindow
+from app.src.fridman_calculations_array import fridman_calculations_
+from app.utils.error_text_maker import define_error_text
 
 cst.deactivate_automatic_dpi_awareness()
 

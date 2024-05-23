@@ -1,4 +1,4 @@
-from texts import (
+from .texts import (
     n_1, n_2, n_3, n_4
 )
 
