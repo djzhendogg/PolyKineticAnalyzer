@@ -1,11 +1,9 @@
-import customtkinter as cst
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import (
     FigureCanvasTkAgg,
     NavigationToolbar2Tk
 )
 import numpy as np
-import matplotlib.pyplot as plt
 
 
 def plot_1(frame, inflection, table):
@@ -20,7 +18,7 @@ def plot_1(frame, inflection, table):
     plot1.plot(table[:, 0], table[:, 2])
     plot1.scatter(inflection[:, 0], inflection[:, 2])
     plot1.plot(inflection[:, 0], inflection[:, 2])
-    plot1.set_xlabel("T, K", fontsize=10)
+    plot1.set_xlabel("T, C", fontsize=10)
     plot1.set_ylabel("DSC", fontsize=10)
 
     # creating the Tkinter canvas
@@ -177,7 +175,7 @@ def avrami_plot_summary(frame, micro_table, tab_name_list):
     for micro_table_1, line_label in zip(micro_table, tab_name_list):
         plot2.plot(micro_table_1[:, 0], micro_table_1[:, 5], label=line_label)
     plot2.legend(loc='center left', bbox_to_anchor=(1, 0.5))
-    plot2.set_xlabel("T, K", fontsize=10)
+    plot2.set_xlabel("T, C", fontsize=10)
     plot2.set_ylabel("Conversion rate", fontsize=10)
     # creating the Tkinter canvas
     # containing the Matplotlib figure

@@ -95,7 +95,7 @@ class ResultWindow(cst.CTkToplevel):
 
             cs_temp_label = cst.CTkLabel(
                 master=frame_4_1,
-                text=f"Crystallization temperature: {class_tables_info.cristal_temp}",
+                text=f"Crystallization temperature: {class_tables_info.cristal_temp} C",
                 font=self.into_text_font,
                 width=400,
                 justify=CENTER,

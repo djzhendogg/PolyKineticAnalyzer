@@ -83,9 +83,16 @@ class Calculations:
             first_min_top_mask = abs(first_table[:, 3]) == firs_grad_min
             second_min_top_mask = abs(second_table[:, 3]) == sec_grad_min
             self.first_min = first_table[first_min_top_mask]
+            if self.first_min.shape[0] > 1:
+                self.first_min = self.first_min[0].reshape(1, 4)
             first_min_id = np.asarray(first_min_top_mask).nonzero()[0][0]
             self.second_min = second_table[second_min_top_mask]
+            if self.second_min.shape[0] > 1:
+                self.second_min = self.second_min[0].reshape(1, 4)
             second_min_id = first_table.shape[0] + np.asarray(second_min_top_mask).nonzero()[0][0]
+            if abs(self.first_min[0][2] - self.second_min[0][2]) > 0.1:
+                self.first_min = first_table[0].reshape(1, 4)
+                first_min_id = 0
             self.inflection = np.r_[self.first_min, self.second_min]
             self.micro_table = self.table_array[first_min_id:second_min_id + 1]
         except:
@@ -156,6 +163,6 @@ class Calculations:
 
 if __name__ == "__main__":
     start_time = time.time()
-    r = Calculations(filepath='data/pbs/PBS_15Kmin.txt').calculate()
+    r = Calculations(filepath='data/peg/PEG_5Kmin.txt').calculate()
     end_time = time.time()
     print(end_time - start_time)

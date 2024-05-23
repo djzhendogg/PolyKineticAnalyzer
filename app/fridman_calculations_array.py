@@ -6,7 +6,7 @@ from scipy import stats
 def fridman_calculations_(calculation_results: list[dict]):
     try:
         fin_dict: dict[str, dict[str, list]] = {}
-        conv_rate_base = np.arange(0.1, 0.8 + 0.01, 0.05)
+        conv_rate_base = np.arange(0.05, 0.95 + 0.01, 0.05)
         for conv_rate_base_id in conv_rate_base:
             fin_dict[str(round(conv_rate_base_id, 2))] = {
                 'x': [],
